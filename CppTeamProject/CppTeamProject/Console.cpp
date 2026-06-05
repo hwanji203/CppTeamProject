@@ -191,6 +191,20 @@ void SetConsoleMouseInputDisabled()
 	SetConsoleMode(handle, mode);
 }
 
+Position GetConsoleResolution()
+{
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_SCREEN_BUFFER_INFO info;
+	GetConsoleScreenBufferInfo(handle, &info);
+
+	// 현재 보이는 창(뷰포트)의 칸 수
+	short width = info.srWindow.Right - info.srWindow.Left + 1;
+	short height = info.srWindow.Bottom - info.srWindow.Top + 1;
+
+	return Position{ width, height };
+}
+
 void GotoXY(int x, int y)
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -266,14 +280,6 @@ bool GetKeyDown(int vKey)
 {
 	return curDown[vKey] && !prevDown[vKey];
 }
-void UpdateInput()
-{
-	for (int i = 0; i < 256; ++i)
-	{
-		prevDown[i] = curDown[i];
-		curDown[i] = GetAsyncKeyState(i) & 0x8000;
-	}
-}
 
 void FrameSync(int fps)
 {
@@ -286,6 +292,20 @@ void FrameSync(int fps)
 	if (elapsed < targetTick)
 		Sleep(targetTick - elapsed);
 	prevTick = GetTickCount64();
+}
+
+static int mouseWheelDelta = 0;
+static bool prevSideDown = false;
+static bool curSideDown = false;
+
+int GetMouseWheelChange()
+{
+	return mouseWheelDelta;
+}
+
+bool GetMouseSideButtonDown()
+{
+	return curSideDown && !prevSideDown;
 }
 
 POINT GetMouseCellPos()
@@ -302,4 +322,49 @@ POINT GetMouseCellPos()
 	POINT cellPos = { pt.x / fontInfo.dwFontSize.X,
 					  pt.y / fontInfo.dwFontSize.Y };
 	return cellPos;
+}
+
+void UpdateInput()
+{
+	for (int i = 0; i < 256; ++i)
+	{
+		prevDown[i] = curDown[i];
+		curDown[i] = GetAsyncKeyState(i) & 0x8000;
+	}
+
+	// 마우스 사이드 버튼
+	prevSideDown = curSideDown;
+	curSideDown = GetAsyncKeyState(VK_XBUTTON1) & 0x8000;
+
+	// 마우스 휠
+	mouseWheelDelta = 0;
+	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD eventCount = 0;
+	GetNumberOfConsoleInputEvents(handle, &eventCount);
+
+	std::vector<INPUT_RECORD> leftover;
+
+	for (DWORD i = 0; i < eventCount; ++i)
+	{
+		INPUT_RECORD record;
+		DWORD read;
+		ReadConsoleInput(handle, &record, 1, &read);
+
+		if (record.EventType == MOUSE_EVENT &&
+			record.Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+		{
+			SHORT delta = HIWORD(record.Event.MouseEvent.dwButtonState);
+			mouseWheelDelta += (delta > 0) ? 1 : -1;
+		}
+		else
+		{
+			leftover.push_back(record);
+		}
+	}
+
+	if (!leftover.empty())
+	{
+		DWORD written;
+		WriteConsoleInput(handle, leftover.data(), (DWORD)leftover.size(), &written);
+	}
 }

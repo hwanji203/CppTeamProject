@@ -7,7 +7,10 @@
 #include<fcntl.h>
 #include<iomanip>
 #include<string>
+#include <vector>
 #pragma comment(lib, "winmm.lib")
+
+#include "Position.h"
 
 using std::string;
 using std::wstring;
@@ -31,6 +34,7 @@ void SetConsoleFullScreen();
 void SetConsoleWindowStyle(bool showTitleBar);
 void ShakeConsoleWindow(int intensity, int duration, int interval);
 void SetConsoleMouseInputDisabled();
+Position GetConsoleResolution();
 // 커서 제어  함수
 void GotoXY(int x, int y);
 void SetCursorVisible(bool visible, DWORD size = 1);
@@ -55,3 +59,6 @@ bool GetKeyDown(int vKey);
 POINT GetMouseCellPos();
 void UpdateInput();
 void FrameSync(int fps);
+
+int GetMouseWheelChange();
+bool GetMouseSideButtonDown();

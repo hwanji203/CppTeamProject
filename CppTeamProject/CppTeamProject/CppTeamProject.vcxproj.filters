@@ -14,15 +14,126 @@
     <Filter Include="Public">
       <UniqueIdentifier>{0b71b3ed-ce52-42f8-ae58-78b2b5f736f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Hwan\01. Core">
+      <UniqueIdentifier>{ff47ebd8-4400-4b28-9d44-4524b50558df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\02. Manager">
+      <UniqueIdentifier>{44db6d3a-e23e-4a1f-a6c4-6caf53ec2c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\03. Actor">
+      <UniqueIdentifier>{fc0ba9e9-fc03-40d4-87d6-4a435052ecd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\04. Scene">
+      <UniqueIdentifier>{fdc62b4c-fa90-4d5c-9ba8-3ff970fd5a39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\05. Map">
+      <UniqueIdentifier>{4d486e74-7a03-4b62-902b-bfec43a47e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\06. Module">
+      <UniqueIdentifier>{5e9ab0b0-429b-4776-be79-8473eb79d955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\99. Headers">
+      <UniqueIdentifier>{0c95b7ae-d639-4037-a7a7-e84e6533e080}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hwan\03. Actor\Interface">
+      <UniqueIdentifier>{f1c5df64-258f-415e-8aaf-70e1972ca0d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">
       <Filter>Public</Filter>
     </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Hwan\01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Hwan\01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="IMovable.cpp">
+      <Filter>Hwan\03. Actor\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>Hwan\05. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="MapGenerator.cpp">
+      <Filter>Hwan\05. Map</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultMapGenerator.cpp">
+      <Filter>Hwan\05. Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
       <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Hwan\01. Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines.h">
+      <Filter>Hwan\99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Hwan\99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Hwan\99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IMovable.h">
+      <Filter>Hwan\03. Actor\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>Hwan\99. Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
+      <Filter>Hwan\05. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="MapGenerator.h">
+      <Filter>Hwan\05. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Hwan\05. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultMapGenerator.h">
+      <Filter>Hwan\05. Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Hwan\99. Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
