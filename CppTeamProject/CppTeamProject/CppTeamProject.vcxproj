@@ -137,10 +137,13 @@
     <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="IMovable.cpp" />
     <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="JJK_Main.cpp" />
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="JJK_Main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="MapGenerator.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
@@ -168,7 +171,7 @@
     <ClInclude Include="MapGenerator.h" />
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Pawn.h" />
-    <ClInclude Include="Position.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

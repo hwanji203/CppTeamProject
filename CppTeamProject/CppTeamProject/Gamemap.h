@@ -7,7 +7,7 @@ public:
 	GameMap(int _w, int _h);
 public:
 	void Fill(const Tile& _t);
-	void Render(const Position& _playerPos) const;
+	void Render(const Vector2& _playerPos) const;
 public:
 	void SetTile(int _x, int _y, Tile _t)
 	{
@@ -26,4 +26,3 @@ private:
 	int m_height;
 	std::vector<std::vector<Tile>> m_vecMapData;
 };
-

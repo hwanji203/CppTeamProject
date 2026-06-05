@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-Rigidbody::Rigidbody(Position* pPos, float friction, float maxSpeed)
+Rigidbody::Rigidbody(Vector2* pPos, float friction, float maxSpeed)
 	: m_pPos(pPos)
 	, m_velocity(0.f)
 	, m_friction(friction)

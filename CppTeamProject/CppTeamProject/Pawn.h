@@ -8,7 +8,7 @@
 class Pawn : public Actor, public IMovable
 {
 public:
-	Pawn(Position _pos = { 0,0 });
+	Pawn(Vector2 _pos = { 0,0 });
 	~Pawn();
 
 	void Move(Dir _dir) override;

@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "Position.h"
+#include "Vector2.h"
 class TitleScene : public Scene
 {
 public:
@@ -11,6 +11,6 @@ public:
     void Release() override;
 private:
     void EnterAnimation();
-    Position m_resolution;
+    Vector2 m_resolution;
 };
 

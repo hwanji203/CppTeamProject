@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-Actor::Actor(Position _pos)
+Actor::Actor(Vector2 _pos)
 	: m_pos(_pos)
 {
 }

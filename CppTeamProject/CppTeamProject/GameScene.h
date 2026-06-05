@@ -1,7 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include<memory>
-#include "Position.h"
+#include "Vector2.h"
 #include "Actor.h"
 #include "InputHandler.h"
 #include "MapGenerator.h"
@@ -16,9 +16,9 @@ public:
     void Render() override;
     void Release() override;
 private:
-    Position GetSpawnPos() const;
+    Vector2 GetSpawnPos() const;
 private:
-    Position m_resolution;
+    Vector2 m_resolution;
     std::unique_ptr<Actor> m_player;
     std::unique_ptr<InputHandler> m_inputHandler;
     std::unique_ptr<MapGenerator> m_generator;

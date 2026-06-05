@@ -3,7 +3,7 @@
 #include "Console.h"
 struct Tile
 {
-	enum class Type { EMPTY, WALL, FLOOR, DOOR, STAIRS, END } type;
+	enum class Type { EMPTY, GROUND, END } type;
 	bool blocked;
 	std::string symbol;
 	std::pair<Color, Color> color;
@@ -11,7 +11,7 @@ struct Tile
 		 Color textColor = Color::WHITE,
 		 Color bgColor = Color::BLACK)
 		: type(t)
-		, blocked(t == Type::WALL || t == Type::EMPTY)
+		, blocked(t == Type::GROUND)
 		, symbol("")
 		, color(textColor, bgColor)
 	{
@@ -21,21 +21,9 @@ struct Tile
 				symbol = "  ";
 				color.first = Color::BLACK;
 				break;
-			case Tile::Type::WALL:
+			case Tile::Type::GROUND:
 				symbol = "■"; // ㅁ한자 2번째줄 6번
 				color.first = Color::LIGHT_GRAY;
-				break;
-			case Tile::Type::FLOOR:
-				symbol = "·"; // ㄱ한자 2번째줄 8번
-				color.first = Color::GRAY;
-				break;
-			case Tile::Type::DOOR:
-				symbol = "Π"; // ㅎ한자 2번째줄 7번
-				color.first = Color::LIGHT_RED;
-				break;
-			case Tile::Type::STAIRS:
-				symbol = "▤"; // ㅁ한자 5번째줄 6번
-				color.first = Color::GRAY;
 				break;
 		}
 	}

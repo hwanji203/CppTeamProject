@@ -16,14 +16,14 @@ void GameMap::Fill(const Tile& _t)
 	}
 }
 
-void GameMap::Render(const Position& _playerPos) const
+void GameMap::Render(const Vector2& _playerPos) const
 {
-	for (int y = 0; y < m_height; ++y)
+	for (int y = 0; y < this->m_height; ++y)
 	{
 		for (int x = 0; x < m_width; ++x)
 		{
 			GotoXY(x * 2, y);
-			if (_playerPos == Position{ x,y })
+			if (_playerPos == Vector2{ x,y })
 				continue;
 
 			// Å¸ÀÏÀ» Âï±â

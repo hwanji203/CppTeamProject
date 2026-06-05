@@ -191,7 +191,7 @@ void SetConsoleMouseInputDisabled()
 	SetConsoleMode(handle, mode);
 }
 
-Position GetConsoleResolution()
+Vector2 GetConsoleResolution()
 {
 	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -202,7 +202,7 @@ Position GetConsoleResolution()
 	short width = info.srWindow.Right - info.srWindow.Left + 1;
 	short height = info.srWindow.Bottom - info.srWindow.Top + 1;
 
-	return Position{ width, height };
+	return Vector2{ width, height };
 }
 
 void GotoXY(int x, int y)
