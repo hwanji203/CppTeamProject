@@ -4,6 +4,7 @@
 #include "TitleScene.h"
 #include "GameScene.h"
 #include "SceneManager.h"
+#include "ColliderManager.h"
 
 Core::Core()
 {
@@ -24,6 +25,7 @@ void Core::Init()
 void Core::Update()
 {
 	SceneManager::GetInst()->Update();
+	ColliderManager::GetInst()->Update();
 }
 
 void Core::Render()
@@ -33,6 +35,7 @@ void Core::Render()
 
 Core::~Core()
 {
+	ColliderManager::GetInst()->DestroyInst();
 	SceneManager::GetInst()->DestroyInst();
 }
 
