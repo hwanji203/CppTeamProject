@@ -37,8 +37,11 @@
     <Filter Include="JJK\Rigidbody">
       <UniqueIdentifier>{7e1c151f-7a81-46a3-a918-65eaa8550fa5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Hwan\06. Module\Command">
-      <UniqueIdentifier>{5f8396ec-ff74-40b0-af39-7f84303f72b6}</UniqueIdentifier>
+    <Filter Include="JJK\Collider">
+      <UniqueIdentifier>{b2d3e4f5-1a2b-3c4d-5e6f-7a8b9c0d1e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JJK\01. Core">
+      <UniqueIdentifier>{c3d4e5f6-2b3c-4d5e-6f7a-8b9c0d1e2f3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,17 +84,17 @@
     <ClCompile Include="DefaultMapGenerator.cpp">
       <Filter>Hwan\05. Map</Filter>
     </ClCompile>
-    <ClCompile Include="MoveCommand.cpp">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClCompile Include="Rigidbody.cpp">
+      <Filter>JJK\Rigidbody</Filter>
     </ClCompile>
-    <ClCompile Include="ICommand.cpp">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClCompile Include="Collider.cpp">
+      <Filter>JJK\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="InputHandler.cpp">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClCompile Include="ColliderManager.cpp">
+      <Filter>JJK\Collider</Filter>
     </ClCompile>
-    <ClCompile Include="CommandPool.cpp">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClCompile Include="JJK_Main.cpp">
+      <Filter>JJK\01. Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,17 +152,14 @@
     <ClInclude Include="Types.h">
       <Filter>Hwan\99. Headers</Filter>
     </ClInclude>
-    <ClInclude Include="MoveCommand.h">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClInclude Include="Rigidbody.h">
+      <Filter>JJK\Rigidbody</Filter>
     </ClInclude>
-    <ClInclude Include="ICommand.h">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClInclude Include="Collider.h">
+      <Filter>JJK\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="InputHandler.h">
-      <Filter>Hwan\06. Module\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandPool.h">
-      <Filter>Hwan\06. Module\Command</Filter>
+    <ClInclude Include="ColliderManager.h">
+      <Filter>JJK\Collider</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

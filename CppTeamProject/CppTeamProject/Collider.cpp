@@ -1,4 +1,4 @@
-#include "Collider.h"
+﻿#include "Collider.h"
 
 Collider::Collider(Position* pPos, int halfWidth, void* pOwner)
 	: m_pPos(pPos)

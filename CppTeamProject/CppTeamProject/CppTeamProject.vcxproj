@@ -126,26 +126,30 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="CommandPool.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderManager.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DefaultMapGenerator.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="IMovable.cpp" />
-    <ClCompile Include="InputHandler.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="JJK_Main.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="MapGenerator.cpp" />
-    <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="CommandPool.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderManager.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DefaultMapGenerator.h" />
@@ -153,13 +157,11 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IMovable.h" />
-    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MapGenerator.h" />
-    <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="Rigidbody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Tile.h" />
