@@ -48,5 +48,5 @@ void Pawn::Render() const
 {
 	SetColor(Color::SKYBLUE);
 	GotoXY(m_pos.x * 2, m_pos.y);
-	cout << "플";
+	//cout << "플";
 }
