@@ -16,12 +16,13 @@ void SceneManager::Render()
 void SceneManager::ChangeScene(const std::string& _sceneName)
 {
 	auto iter = m_mapScenes.find(_sceneName);
+
 	if (iter == m_mapScenes.end())
 		return;
+
 	if (m_curScene)
 		m_curScene->Release();
 
-	//m_curScene = std::move(iter->second);
 	m_curScene = iter->second.get();
 	m_curScene->Init();
 }

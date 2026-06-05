@@ -12,15 +12,3 @@ struct InputKey
 	bool isPrevDown;
 	int prevTime;
 };
-class InputHandler
-{
-public:
-	InputHandler();
-public:
-	ICommand* HandleInput();
-	//std::unique_ptr<ICommand> HandleInput();
-private:
-	std::vector<InputKey> m_vecKeys;
-	//CommandPool m_commandPool;
-};
-

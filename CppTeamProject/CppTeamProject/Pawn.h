@@ -13,4 +13,3 @@ public:
 	void Tick() override;
 	void Render() const override;
 };
-

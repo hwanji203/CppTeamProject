@@ -1,12 +1,4 @@
 #pragma once
-//#include "Pawn.h"
-//void test(); // 함수 전방선언
-//class Actor; // 이 클래스가 있습니다. - 클래스 전방선언
-//#include "Actor.h"
-
-
-//class Actor; 
-//class InputHandler;
 
 class Core
 {
@@ -22,8 +14,4 @@ private:
 
 private:
 	bool m_isRunning = true;
-
-	//Actor* m_player;
-	//InputHandler* m_inputHandler;
-
 };

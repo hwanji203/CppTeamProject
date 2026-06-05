@@ -30,6 +30,5 @@ public:
 private:
 	static SceneManager* m_inst;
 	std::map<std::string, std::unique_ptr<Scene>> m_mapScenes;
-	//std::unique_ptr<Scene> m_curScene = nullptr;
 	Scene* m_curScene = nullptr;
 };

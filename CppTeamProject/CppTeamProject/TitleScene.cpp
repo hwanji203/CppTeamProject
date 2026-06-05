@@ -3,7 +3,7 @@
 #include "SceneManager.h"
 void TitleScene::Init()
 {
-	//m_resolution = GetResolution();
+	m_resolution = GetResolution();
 }
 
 void TitleScene::Update()
