@@ -126,14 +126,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="CommandPool.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DefaultMapGenerator.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="IMovable.cpp" />
+    <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapGenerator.cpp" />
+    <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -141,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
+    <ClInclude Include="CommandPool.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DefaultMapGenerator.h" />
@@ -148,8 +153,11 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IMovable.h" />
+    <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MapGenerator.h" />
+    <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Scene.h" />

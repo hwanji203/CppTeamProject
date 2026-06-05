@@ -4,9 +4,8 @@
 #include "Position.h"
 #include "Actor.h"
 #include "InputHandler.h"
-#include "GameMap.h"
 #include "MapGenerator.h"
-
+#include "GameMap.h"
 class GameScene :
     public Scene
 {

@@ -1,6 +1,6 @@
 #include "DefaultMapGenerator.h"
 
-std::unique_ptr<GameMap> BSPGenerator::Generate(int _width, int _height)
+std::unique_ptr<GameMap> DefaultMapGenerator::Generate(int _width, int _height)
 {
 
 

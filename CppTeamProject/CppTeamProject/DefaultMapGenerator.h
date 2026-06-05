@@ -3,7 +3,7 @@
 #include<vector>
 #include "Types.h"
 
-class BSPGenerator :
+class DefaultMapGenerator :
     public MapGenerator
 {
 public:

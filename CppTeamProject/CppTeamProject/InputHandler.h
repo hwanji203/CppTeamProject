@@ -2,13 +2,14 @@
 #include<vector>
 #include<memory>
 #include "Enums.h"
-//#include "CommandPool.h"
+#include "CommandPool.h"
+
 class ICommand;
-//#include "ICommand.h"
-struct InputKey
+
+class InputHandler
 {
-	int vk;
-	Dir dir;
-	bool isPrevDown;
-	int prevTime;
+public:
+	ICommand* HandleInput();
+private:
+	CommandPool m_commandPool;
 };

@@ -4,19 +4,11 @@
 #include "Utils.h"
 #include "Pawn.h"
 #include "Types.h"
+#include "DefaultMapGenerator.h"
 
 Position GameScene::GetSpawnPos() const
 {
-	Position pos = { 0,0 };
-	auto gen = dynamic_cast<BSPGenerator*>(m_generator.get());
-	if (gen == nullptr)
-		return pos;
-	const std::vector<Rect>& rooms = gen->GetLastRooms();
-	pos = rooms[RandomInRange(random_engine::mt19937, 0, (int)rooms.size() - 1)].Center();
-	//std::dynamic_pointer_cast<>
-
-	return pos;
-	return { 0, 0 };
+	return { m_resolution.x / 2, m_resolution.y / 2 };
 }
 
 void GameScene::Init()
@@ -25,7 +17,7 @@ void GameScene::Init()
 	//m_inputHandler = new InputHandler;
 	//m_player = new Pawn({ m_resolution.x / 2, m_resolution.y / 2 });
 	m_inputHandler = std::make_unique<InputHandler>();
-	m_generator = std::make_unique<BSPGenerator>();
+	m_generator = std::make_unique<DefaultMapGenerator>();
 	m_gameMap = m_generator->Generate(50, 30);
 	Position startPos = GetSpawnPos();
 	m_player = std::make_unique<Pawn>(startPos);
