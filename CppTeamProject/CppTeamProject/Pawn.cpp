@@ -1,41 +1,52 @@
 #include "Pawn.h"
 #include "Console.h"
+#include "ColliderManager.h"
+
 Pawn::Pawn(Position _pos)
 	: Actor(_pos)
+	, m_rigidbody(std::make_unique<Rigidbody>(&m_pos))
+	, m_collider(std::make_unique<Collider>(&m_pos, 1, this))
 {
+	// ì¶©ëŒ ì½œë°± ë“±ë¡ (OnCollisionEnterì™€ ê°™ì€ ì—­í• )
+	m_collider->SetOnCollision([this](Collider* other)
+	{
+		// ì¶©ëŒ ì‹œ ì†ë„ ë°˜ì „ í›„ ê°ì‡  (íŠ•ê¸°ëŠ” ëŠë‚Œ)
+		m_rigidbody->SetVelocity(-m_rigidbody->GetVelocity() * 0.5f);
+	});
 
+	ColliderManager::GetInst()->RegisterCollider(m_collider.get());
 }
 
+Pawn::~Pawn()
+{
+	ColliderManager::GetInst()->UnregisterCollider(m_collider.get());
+}
+
+// í‚¤ ìž…ë ¥ â†’ AddForceë¡œ ë°€ì–´ì£¼ê¸° (ìˆœê°„ ì´ë™ì´ ì•„ë‹Œ ë¯¸ë„ëŸ¬ì§€ëŠ” ì´ë™)
 void Pawn::Move(Dir _dir)
 {
 	m_prevPos = m_pos;
 	switch (_dir)
 	{
-		case Dir::UP:
-			--m_pos.y;
-			break;
-		case Dir::DOWN:
-			++m_pos.y;
-			break;
 		case Dir::LEFT:
-			m_pos.x -= 1;
+			m_rigidbody->AddForce(-1.0f);
 			break;
 		case Dir::RIGHT:
-			m_pos.x += 1;
+			m_rigidbody->AddForce(1.0f);
+			break;
+		default:
 			break;
 	}
+}
+
+void Pawn::Tick()
+{
+	m_rigidbody->Tick();
 }
 
 void Pawn::Render() const
 {
 	SetColor(Color::SKYBLUE);
 	GotoXY(m_pos.x * 2, m_pos.y);
-	cout << "¡×";
+	cout << "í”Œ";
 }
-
-// ÀÔ·Â -> Æ÷Áö¼Ç º¯°æ
-void Pawn::Tick()
-{
-	// PawnÀÌ ÀÚÃ¼ÀûÀ¸·Î ÇÒ°Å¸¦ updateµ¹¸®¸é µÊ.
-}
-

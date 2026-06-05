@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include<iostream>
 #include<conio.h>
 #define NOMINMAX
@@ -19,15 +19,15 @@ using std::cout;
 using std::endl;
 using std::wcout;
 
-// ¾Æ½ºÅ° ¾ÆÆ®
+// ï¿½Æ½ï¿½Å° ï¿½ï¿½Æ®
 void SetUnicodeMode();
 void SetDefaultMode();
 
-// ´ÙÀÌ¾ó·Î±×
+// ï¿½ï¿½ï¿½Ì¾ï¿½Î±ï¿½
 void RenderDialogue(const string& text, int delay);
 void RenderChar(char ch, int delayTime, bool isSkip);
 
-// ÄÜ¼Ö Ã¢ °ü·Ã ÇÔ¼ö
+// ï¿½Ü¼ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 void SetConsoleGameTitle(const wstring& title);
 void SetConsoleWindowSize(int width, int height);
 void SetConsoleFullScreen();
@@ -35,7 +35,7 @@ void SetConsoleWindowStyle(bool showTitleBar);
 void ShakeConsoleWindow(int intensity, int duration, int interval);
 void SetConsoleMouseInputDisabled();
 Position GetConsoleResolution();
-// Ä¿¼­ Á¦¾î  ÇÔ¼ö
+// Ä¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½  ï¿½Ô¼ï¿½
 void GotoXY(int x, int y);
 void SetCursorVisible(bool visible, DWORD size = 1);
 BOOL IsGotoXY(int x, int y);
@@ -51,9 +51,9 @@ enum class Color
 void SetColor(Color textColor = Color::WHITE, Color bgColor = Color::BLACK);
 void DrawBar(int x, int y, const string& label,
 			 int value, int maxValue, int barWidth,
-			 const string& fillChar = "¡á", const string& emptyChar = "¡à");
+			 const string& fillChar = "ï¿½ï¿½", const string& emptyChar = "ï¿½ï¿½");
 
-// Å° ÀÔ·Â ÇÔ¼ö
+// Å° ï¿½Ô·ï¿½ ï¿½Ô¼ï¿½
 bool GetKey(int vKey);
 bool GetKeyDown(int vKey);
 POINT GetMouseCellPos();
