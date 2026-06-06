@@ -36,7 +36,6 @@ void GameScene::Update()
 
 void GameScene::Render()
 {
-	GotoXY(0, 0);
 	m_gameMap->Render(m_player->GetPos());
 	m_player->Render();
 }

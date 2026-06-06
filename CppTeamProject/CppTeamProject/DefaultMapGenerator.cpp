@@ -13,7 +13,7 @@ std::unique_ptr<GameMap> DefaultMapGenerator::Generate(int _width, int _height)
     int groundY = _height * 3 / 4;   // 바닥 높이 (아래쪽)
     int edgeGap = 2;                 // 양쪽 끝에 비워둘 칸 수
 
-    for (int x = edgeGap; x < _width - edgeGap; ++x)
+    for (int x = edgeGap; x < _width / 2 - edgeGap; ++x)
     {
         map->SetTile(x, groundY, Tile::Type::GROUND);
     }

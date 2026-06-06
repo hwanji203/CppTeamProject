@@ -332,39 +332,28 @@ void UpdateInput()
 		curDown[i] = GetAsyncKeyState(i) & 0x8000;
 	}
 
-	// ���콺 ���̵� ��ư
 	prevSideDown = curSideDown;
 	curSideDown = GetAsyncKeyState(VK_XBUTTON1) & 0x8000;
 
-	// ���콺 ��
 	mouseWheelDelta = 0;
 	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
 	DWORD eventCount = 0;
 	GetNumberOfConsoleInputEvents(handle, &eventCount);
 
-	std::vector<INPUT_RECORD> leftover;
-
-	for (DWORD i = 0; i < eventCount; ++i)
+	if (eventCount > 0)
 	{
-		INPUT_RECORD record;
-		DWORD read;
-		ReadConsoleInput(handle, &record, 1, &read);
+		std::vector<INPUT_RECORD> records(eventCount);
+		DWORD read = 0;
+		ReadConsoleInput(handle, records.data(), eventCount, &read);
 
-		if (record.EventType == MOUSE_EVENT &&
-			record.Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+		for (DWORD i = 0; i < read; ++i)
 		{
-			SHORT delta = HIWORD(record.Event.MouseEvent.dwButtonState);
-			mouseWheelDelta += (delta > 0) ? 1 : -1;
+			if (records[i].EventType == MOUSE_EVENT &&
+				records[i].Event.MouseEvent.dwEventFlags == MOUSE_WHEELED)
+			{
+				SHORT delta = HIWORD(records[i].Event.MouseEvent.dwButtonState);
+				mouseWheelDelta += delta / 120;
+			}
 		}
-		else
-		{
-			leftover.push_back(record);
-		}
-	}
-
-	if (!leftover.empty())
-	{
-		DWORD written;
-		WriteConsoleInput(handle, leftover.data(), (DWORD)leftover.size(), &written);
 	}
 }
