@@ -7,10 +7,10 @@ Pawn::Pawn(Vector2 _pos)
 	, m_rigidbody(std::make_unique<Rigidbody>(&m_pos))
 	, m_collider(std::make_unique<Collider>(&m_pos, 1, this))
 {
-	// Ãæµ¹ ÄÝ¹é µî·Ï (OnCollisionEnter¿Í °°Àº ¿ªÇÒ)
+	// ï¿½æµ¹ ï¿½Ý¹ï¿½ ï¿½ï¿½ï¿½ (OnCollisionEnterï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	m_collider->SetOnCollision([this](Collider* other)
 	{
-		// Ãæµ¹ ½Ã ¼Óµµ ¹ÝÀü ÈÄ °¨¼è (Æ¨±â´Â ´À³¦)
+		// ï¿½æµ¹ ï¿½ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Æ¨ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 		m_rigidbody->SetVelocity(-m_rigidbody->GetVelocity() * 0.5f);
 	});
 
@@ -22,7 +22,7 @@ Pawn::~Pawn()
 	ColliderManager::GetInst()->UnregisterCollider(m_collider.get());
 }
 
-// Å° ÀÔ·Â ¡æ AddForce·Î ¹Ð¾îÁÖ±â (¼ø°£ ÀÌµ¿ÀÌ ¾Æ´Ñ ¹Ì²ô·¯Áö´Â ÀÌµ¿)
+// Å° ï¿½Ô·ï¿½ ï¿½ï¿½ AddForceï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½Ö±ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½)
 void Pawn::Move(Dir _dir)
 {
 	m_prevPos = m_pos;
@@ -48,5 +48,5 @@ void Pawn::Render() const
 {
 	SetColor(Color::SKYBLUE);
 	GotoXY(m_pos.x * 2, m_pos.y);
-	cout << "¡×";
+	cout << "ï¿½ï¿½";
 }

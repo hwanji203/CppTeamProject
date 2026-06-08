@@ -19,8 +19,8 @@ public:
 
 private:
 	Vector2* m_pPos;
-	int       m_halfWidth; // 콜라이더 반폭 (좌우로 halfWidth 칸씩)
-	void*     m_pOwner;    // 소유 Actor 식별용 (void* → 필요 시 static_cast)
+	int       m_halfWidth;
+	void*     m_pOwner; 
 
 	std::function<void(Collider*)> m_onCollision;
 };

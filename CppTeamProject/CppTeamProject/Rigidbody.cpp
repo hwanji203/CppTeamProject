@@ -1,14 +1,21 @@
-﻿#include "Rigidbody.h"
+#include "Rigidbody.h"
 #include "Defines.h"
 #include <algorithm>
 #include <cmath>
 
-Rigidbody::Rigidbody(Vector2* pPos, float friction, float maxSpeed)
+static constexpr float GRAVITY        = 0.02f;
+static constexpr float MAX_FALL_SPEED = 4.0f;
+
+Rigidbody::Rigidbody(Vector2* pPos, float friction, float maxSpeed, float gravityScale)
 	: m_pPos(pPos)
 	, m_velocity(0.f)
+	, m_velocityY(0.f)
 	, m_friction(friction)
 	, m_maxSpeed(maxSpeed)
+	, m_gravityScale(gravityScale)
 	, m_accumX(0.f)
+	, m_accumY(0.f)
+	, m_isGrounded(false)
 {
 }
 
@@ -23,17 +30,32 @@ void Rigidbody::Tick(float deltaTime)
 	{
 		m_velocity = 0.f;
 		m_accumX   = 0.f;
-		return;
+	}
+	else
+	{
+		m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
+
+		m_accumX += m_velocity * deltaTime * FRAME;
+		int stepsX = static_cast<int>(m_accumX);
+		if (stepsX != 0)
+		{
+			m_pPos->x += stepsX;
+			m_accumX  -= static_cast<float>(stepsX);
+		}
 	}
 
-	m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
-
-	m_accumX += m_velocity * deltaTime * FRAME;
-	int steps = static_cast<int>(m_accumX);
-	if (steps != 0)
+	if (!m_isGrounded)
 	{
-		m_pPos->x += steps;
-		m_accumX  -= static_cast<float>(steps);
+		m_velocityY += GRAVITY * m_gravityScale;
+		m_velocityY  = std::min(m_velocityY, MAX_FALL_SPEED);
+	}
+
+	m_accumY += m_velocityY * deltaTime * FRAME;
+	int stepsY = static_cast<int>(m_accumY);
+	if (stepsY != 0)
+	{
+		m_pPos->y += stepsY;
+		m_accumY  -= static_cast<float>(stepsY);
 	}
 }
 
@@ -48,8 +70,12 @@ void Rigidbody::SetVelocity(float velocity)
 	m_velocity = std::clamp(velocity, -m_maxSpeed, m_maxSpeed);
 }
 
-void Rigidbody::StopMovement()
+void Rigidbody::SetGrounded(bool grounded)
 {
-	m_velocity = 0.f;
-	m_accumX   = 0.f;
+	m_isGrounded = grounded;
+	if (grounded)
+	{
+		m_velocityY = 0.f;
+		m_accumY    = 0.f;
+	}
 }

@@ -24,3 +24,12 @@ private:
 	std::unique_ptr<Collider>  m_collider;
 };
 
+struct test
+{
+	int a = 0;
+};
+
+struct test2
+{
+	int a = 0;
+};
