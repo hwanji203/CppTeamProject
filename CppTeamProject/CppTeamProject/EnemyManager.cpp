@@ -21,6 +21,6 @@ void EnemyManager::TrySpawnEnemyInRandomPos()
 		m_nextSpawnTime = cur + m_spawnDelay;
 		Vector2 startPos = { std::rand() % SCREEN_WIDTH };
 		auto enemy = std::make_unique<Enemy>();
-		m_enemys.push_back(enemy);
+		m_enemys.push_back(move(enemy));
 	}
 }

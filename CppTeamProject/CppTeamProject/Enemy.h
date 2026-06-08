@@ -7,7 +7,7 @@
 class Enemy : public Pawn
 {
 public:
-	Enemy(Vector2 pos = { 0, 0 }, int power = 1);
+	Enemy(int power = 1, Vector2 pos = { 0, 0 });
 
 	virtual void Tick() override;
 	virtual void Render() const override;

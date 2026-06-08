@@ -2,7 +2,7 @@
 #include "Console.h"
 #include "ColliderManager.h"
 
-Enemy::Enemy(Vector2 pos, int power)
+Enemy::Enemy(int power, Vector2 pos)
 	: Pawn(pos),
 	m_power(power)
 {
