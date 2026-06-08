@@ -20,7 +20,6 @@ int Collider::GetRight() const
 
 bool Collider::Overlaps(const Collider& other) const
 {
-	// 1D AABB: 두 선분이 겹치는지 확인
 	return GetLeft() <= other.GetRight() && GetRight() >= other.GetLeft();
 }
 

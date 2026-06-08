@@ -12,7 +12,6 @@ public:
 	void RegisterCollider(Collider* pCollider);
 	void UnregisterCollider(Collider* pCollider);
 
-	// 매 프레임 SceneManager::Update() 이후 호출
 	void Update();
 
 private:
