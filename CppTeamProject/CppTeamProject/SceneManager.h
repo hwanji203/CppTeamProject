@@ -1,7 +1,7 @@
 #pragma once
 // 어디서든지 접근 -> include
 // 객체 하나만 존재 -> static
-#include "Defines.h"
+#include "Utils.h"
 #include<map>
 #include<memory>
 #include<string>

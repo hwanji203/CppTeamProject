@@ -132,10 +132,12 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DefaultMapGenerator.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="ICommand.cpp" />
-    <ClCompile Include="IMovable.cpp" />
+    <ClCompile Include="IPhysicsable.cpp" />
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="JJK_Main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -146,7 +148,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="MapGenerator.cpp" />
-    <ClCompile Include="MoveCommand.cpp" />
+    <ClCompile Include="VelocityCommand.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -162,14 +164,16 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="DefaultMapGenerator.h" />
     <ClInclude Include="Defines.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="ICommand.h" />
-    <ClInclude Include="IMovable.h" />
+    <ClInclude Include="IPhysicsable.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="MapGenerator.h" />
-    <ClInclude Include="MoveCommand.h" />
+    <ClInclude Include="VelocityCommand.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Rigidbody.h" />

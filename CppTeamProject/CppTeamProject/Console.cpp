@@ -295,17 +295,10 @@ void FrameSync(int fps)
 }
 
 static int mouseWheelDelta = 0;
-static bool prevSideDown = false;
-static bool curSideDown = false;
 
 int GetMouseWheelChange()
 {
 	return mouseWheelDelta;
-}
-
-bool GetMouseSideButtonDown()
-{
-	return curSideDown && !prevSideDown;
 }
 
 POINT GetMouseCellPos()
@@ -331,9 +324,6 @@ void UpdateInput()
 		prevDown[i] = curDown[i];
 		curDown[i] = GetAsyncKeyState(i) & 0x8000;
 	}
-
-	prevSideDown = curSideDown;
-	curSideDown = GetAsyncKeyState(VK_XBUTTON1) & 0x8000;
 
 	mouseWheelDelta = 0;
 	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);

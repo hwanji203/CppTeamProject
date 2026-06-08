@@ -9,11 +9,8 @@ class ICommand;
 class InputHandler
 {
 public:
-	InputHandler();
-public:
 	ICommand* HandleInput();
 private:
-	std::map<int, Dir> m_vecKeys;
 	CommandPool m_commandPool;
 };
 

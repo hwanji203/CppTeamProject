@@ -61,4 +61,3 @@ void UpdateInput();
 void FrameSync(int fps);
 
 int GetMouseWheelChange();
-bool GetMouseSideButtonDown();

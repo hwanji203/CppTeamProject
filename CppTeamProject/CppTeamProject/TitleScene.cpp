@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 #include "Console.h"
 #include "SceneManager.h"
+#include "Defines.h"
 void TitleScene::Init()
 {
 	m_resolution = { SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -8,7 +9,7 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	if (GetKeyDown(VK_SPACE))
 	{
 		EnterAnimation();
 		SceneManager::GetInst()->ChangeScene("GameScene");

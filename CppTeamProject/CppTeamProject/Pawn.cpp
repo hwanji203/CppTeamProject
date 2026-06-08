@@ -23,20 +23,10 @@ Pawn::~Pawn()
 }
 
 // 키 입력 → AddForce로 밀어주기 (순간 이동이 아닌 미끄러지는 이동)
-void Pawn::Move(Dir _dir)
+void Pawn::SetVelocity(float velocityX)
 {
 	m_prevPos = m_pos;
-	switch (_dir)
-	{
-		case Dir::LEFT:
-			m_rigidbody->AddForce(-1.0f);
-			break;
-		case Dir::RIGHT:
-			m_rigidbody->AddForce(1.0f);
-			break;
-		default:
-			break;
-	}
+	m_rigidbody->AddForce(velocityX);
 }
 
 void Pawn::Tick()
@@ -47,6 +37,10 @@ void Pawn::Tick()
 void Pawn::Render() const
 {
 	SetColor(Color::SKYBLUE);
-	GotoXY(m_pos.x * 2, m_pos.y);
+	GotoXY(3, 3);
+	cout << m_rigidbody->GetVelocity();
+
+	SetColor(Color::SKYBLUE);
+	GotoXY(m_pos.x, m_pos.y);
 	cout << "§";
 }

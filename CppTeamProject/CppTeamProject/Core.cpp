@@ -24,6 +24,8 @@ void Core::Init()
 
 void Core::Update()
 {
+	UpdateInput();
+
 	SceneManager::GetInst()->Update();
 	ColliderManager::GetInst()->Update();
 }
