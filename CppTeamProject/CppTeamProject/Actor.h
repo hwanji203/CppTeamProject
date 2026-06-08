@@ -1,9 +1,9 @@
 #pragma once
-#include "Position.h"
+#include "Vector2.h"
 class Actor
 {
 public:
-	Actor(Position _pos = { 0,0 });
+	Actor(Vector2 _pos = { 0,0 });
 	virtual ~Actor() = default;
 
 	virtual void Tick() abstract;
@@ -11,12 +11,12 @@ public:
 
 public:
 	// inline 함수 = 매크로 + 함수의 장점
-	const Position& GetPos() const
+	const Vector2& GetPos() const
 	{
 		return m_pos;
 	}
 protected:
-	Position m_pos;
-	Position m_prevPos;
+	Vector2 m_pos;
+	Vector2 m_prevPos;
 };
 

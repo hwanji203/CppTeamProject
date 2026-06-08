@@ -35,18 +35,18 @@ int main()
     SetConsoleMouseInputDisabled();
 
     // ── 플레이어 ──────────────────────────────────────────────
-    Position  playerPos = { 8, FIELD_Y };
+    Vector2  playerPos = { 8, FIELD_Y };
     Rigidbody playerRb(&playerPos, 0.88f, 8.0f);
     Collider  playerCol(&playerPos, 1, ToVoid(ID_PLAYER));
 
     // ── 밀리는 박스 ───────────────────────────────────────────
-    Position  boxPos = { 20, FIELD_Y };
+    Vector2  boxPos = { 20, FIELD_Y };
     Rigidbody boxRb(&boxPos, 0.88f, 8.0f);
     Collider  boxCol(&boxPos, 1, ToVoid(ID_BOX));
 
     // ── 고정 벽 ───────────────────────────────────────────────
-    Position leftWallPos  = { LEFT_X,  FIELD_Y };
-    Position rightWallPos = { RIGHT_X, FIELD_Y };
+    Vector2 leftWallPos  = { LEFT_X,  FIELD_Y };
+    Vector2 rightWallPos = { RIGHT_X, FIELD_Y };
     Collider leftWallCol (&leftWallPos,  1, ToVoid(ID_LWALL));
     Collider rightWallCol(&rightWallPos, 1, ToVoid(ID_RWALL));
 

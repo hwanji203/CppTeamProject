@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "Position.h"
+#include "Vector2.h"
 
 class Rigidbody
 {
 public:
-	Rigidbody(Position* pPos, float friction = 0.85f, float maxSpeed = 20.0f);
+	Rigidbody(Vector2* pPos, float friction = 0.85f, float maxSpeed = 20.0f);
 
 	void Tick(float deltaTime = 1.0f / 60.0f);
 	void AddForce(float force);
@@ -15,7 +15,7 @@ public:
 	bool IsMoving()     const { return m_velocity > 0.01f || m_velocity < -0.01f; }
 
 private:
-	Position* m_pPos;
+	Vector2* m_pPos;
 
 	float m_velocity;
 	float m_friction;

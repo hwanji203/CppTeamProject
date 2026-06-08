@@ -1,6 +1,6 @@
 ﻿#include "Collider.h"
 
-Collider::Collider(Position* pPos, int halfWidth, void* pOwner)
+Collider::Collider(Vector2* pPos, int halfWidth, void* pOwner)
 	: m_pPos(pPos)
 	, m_halfWidth(halfWidth)
 	, m_pOwner(pOwner)

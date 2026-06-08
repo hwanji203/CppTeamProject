@@ -3,7 +3,7 @@
 #include "SceneManager.h"
 void TitleScene::Init()
 {
-	m_resolution = GetConsoleResolution();
+	m_resolution = { SCREEN_WIDTH, SCREEN_HEIGHT };
 }
 
 void TitleScene::Update()
@@ -44,8 +44,9 @@ void TitleScene::EnterAnimation()
 
 void TitleScene::Render()
 {
-	m_resolution = GetConsoleResolution();
-	Position startPos = { m_resolution.x / 2, m_resolution.y / 2 };
+	Vector2 startPos = { m_resolution.x / 2, m_resolution.y / 2 };
+	Vector2 offset = { -5, -2 };
+	startPos = startPos + offset;
 	GotoXY(startPos.x, startPos.y);
 	cout << "----------";
 	GotoXY(startPos.x, startPos.y +1);

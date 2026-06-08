@@ -1,9 +1,9 @@
 #pragma once
-// ï¿½ï¿½, ï¿½Ù´ï¿½, ï¿½ï¿½, ï¿½ï¿½ï¿½
+// º®, ¹Ù´Ú, ¹®, °è´Ü
 #include "Console.h"
 struct Tile
 {
-	enum class Type { EMPTY, WALL, FLOOR, DOOR, STAIRS, END } type;
+	enum class Type { EMPTY, GROUND, END } type;
 	bool blocked;
 	std::string symbol;
 	std::pair<Color, Color> color;
@@ -11,7 +11,7 @@ struct Tile
 		 Color textColor = Color::WHITE,
 		 Color bgColor = Color::BLACK)
 		: type(t)
-		, blocked(t == Type::WALL || t == Type::EMPTY)
+		, blocked(t == Type::GROUND)
 		, symbol("")
 		, color(textColor, bgColor)
 	{
@@ -21,21 +21,9 @@ struct Tile
 				symbol = "  ";
 				color.first = Color::BLACK;
 				break;
-			case Tile::Type::WALL:
-				symbol = "ï¿½ï¿½"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½Â°ï¿½ï¿½ 6ï¿½ï¿½
+			case Tile::Type::GROUND:
+				symbol = "¡á"; // ¤±ÇÑÀÚ 2¹øÂ°ÁÙ 6¹ø
 				color.first = Color::LIGHT_GRAY;
-				break;
-			case Tile::Type::FLOOR:
-				symbol = "ï¿½ï¿½"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½Â°ï¿½ï¿½ 8ï¿½ï¿½
-				color.first = Color::GRAY;
-				break;
-			case Tile::Type::DOOR:
-				symbol = "ï¿½ï¿½"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½Â°ï¿½ï¿½ 7ï¿½ï¿½
-				color.first = Color::LIGHT_RED;
-				break;
-			case Tile::Type::STAIRS:
-				symbol = "ï¿½ï¿½"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 5ï¿½ï¿½Â°ï¿½ï¿½ 6ï¿½ï¿½
-				color.first = Color::GRAY;
 				break;
 		}
 	}

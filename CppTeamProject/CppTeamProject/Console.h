@@ -10,7 +10,7 @@
 #include <vector>
 #pragma comment(lib, "winmm.lib")
 
-#include "Position.h"
+#include "Vector2.h"
 
 using std::string;
 using std::wstring;
@@ -34,7 +34,7 @@ void SetConsoleFullScreen();
 void SetConsoleWindowStyle(bool showTitleBar);
 void ShakeConsoleWindow(int intensity, int duration, int interval);
 void SetConsoleMouseInputDisabled();
-Position GetConsoleResolution();
+Vector2 GetConsoleResolution();
 // Ŀ�� ����  �Լ�
 void GotoXY(int x, int y);
 void SetCursorVisible(bool visible, DWORD size = 1);
