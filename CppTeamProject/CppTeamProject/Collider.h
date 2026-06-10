@@ -9,6 +9,8 @@ public:
 
 	int  GetLeft()  const;
 	int  GetRight() const;
+	int  GetTop()    const;
+	int  GetBottom() const;
 	bool Overlaps(const Collider& other) const;
 
 	void SetOnCollision(std::function<void(Collider*)> callback);
