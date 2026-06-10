@@ -6,6 +6,7 @@
 #include "Types.h"
 #include "DefaultMapGenerator.h"
 #include "Defines.h"
+#include "ColliderManager.h"
 
 Vector2 GameScene::GetSpawnPos() const
 {
@@ -14,7 +15,7 @@ Vector2 GameScene::GetSpawnPos() const
 	if (!gen)
 		return pos;
 
-	return { m_resolution.x / 2, gen->GetGroundY() - 1};
+	return { m_resolution.x / 2, gen->GetGroundY() - 2};
 }
 
 void GameScene::Init()
@@ -23,7 +24,6 @@ void GameScene::Init()
 	m_inputHandler = std::make_unique<InputHandler>();
 	m_generator = std::make_unique<DefaultMapGenerator>();
 	m_gameMap = m_generator->Generate(SCREEN_WIDTH, SCREEN_HEIGHT);
-	m_gameMap->SetupCollider();
 	Vector2 startPos = GetSpawnPos();
 	m_player = std::make_unique<Pawn>(startPos);
 }

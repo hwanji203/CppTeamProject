@@ -9,8 +9,12 @@ Pawn::Pawn(Vector2 _pos)
 {
 	m_collider->SetOnCollision([this](Collider* other)
 	{
-		// �浹 �� �ӵ� ���� �� ���� (ƨ��� ����)
-		m_rigidbody->SetVelocity(-m_rigidbody->GetVelocity() * 0.5f);
+		int tileTop = other->GetTop();    // 타일 y
+		if (m_pos.y >= tileTop - 1)        // 발이 타일에 닿거나 박혔으면
+		{
+			m_pos.y = tileTop - 1;         // 타일 바로 위 칸에 발 붙이기
+			m_rigidbody->SetGrounded(true);// 중력 멈춤
+		}
 	});
 
 	ColliderManager::GetInst()->RegisterCollider(m_collider.get());
@@ -29,6 +33,7 @@ void Pawn::SetVelocity(float velocityX)
 
 void Pawn::Tick()
 {
+	m_rigidbody->SetGrounded(false); // 일단 공중 가정, 충돌 시 다시 true
 	m_rigidbody->Tick();
 }
 
