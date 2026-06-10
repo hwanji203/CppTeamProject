@@ -19,5 +19,7 @@ std::unique_ptr<GameMap> DefaultMapGenerator::Generate(int _width, int _height)
         map->SetTile(x, m_groundY, Tile::Type::GROUND);
     }
 
+    map->SetupCollider();
+
     return map;
 }
