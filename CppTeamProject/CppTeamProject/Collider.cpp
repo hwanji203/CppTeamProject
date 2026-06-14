@@ -1,4 +1,5 @@
 ﻿#include "Collider.h"
+#include "ColliderManager.h"
 
 Collider::Collider(Vector2* pPos, int halfWidth, void* pOwner)
 	: m_pPos(pPos)
@@ -6,6 +7,11 @@ Collider::Collider(Vector2* pPos, int halfWidth, void* pOwner)
 	, m_pOwner(pOwner)
 	, m_onCollision(nullptr)
 {
+}
+
+Collider::~Collider()
+{
+	ColliderManager::GetInst()->UnregisterCollider(this);
 }
 
 int Collider::GetLeft() const

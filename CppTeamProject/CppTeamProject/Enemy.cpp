@@ -20,5 +20,5 @@ void Enemy::Render() const
 	cout << m_power;
 
 	GotoXY(m_pos.x, m_pos.y);
-	cout << "¢Í";
+	cout << "ï¿½ï¿½";
 }

@@ -6,12 +6,13 @@
 #include "SettingUI.h"
 #include "SceneManager.h"
 #include "ColliderManager.h"
+#include <string>
 
 Core::Core()
 {
 	SceneManager::GetInst()->RegisterScene("TitleScene", std::make_unique<TitleScene>());
-	SceneManager::GetInst()->RegisterScene("GameScene",  std::make_unique<GameScene>());
-	SceneManager::GetInst()->RegisterScene("SettingUI",  std::make_unique<SettingUI>());
+	SceneManager::GetInst()->RegisterScene("GameScene", std::make_unique<GameScene>());
+	SceneManager::GetInst()->RegisterScene("SettingUI", std::make_unique<SettingUI>());
 	SceneManager::GetInst()->ChangeScene("TitleScene");
 }
 
@@ -28,7 +29,19 @@ void Core::Update()
 {
 	UpdateInput();
 
-	SceneManager::GetInst()->Update();
+	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
+	if (GetKeyDown(VK_ESCAPE) && curScene != "SettingUI")
+	{
+		SettingUI* setting = static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
+		if (setting)
+			setting->SetPrevScene(curScene);
+		SceneManager::GetInst()->ChangeScene("SettingUI");
+	}
+	else
+	{
+		SceneManager::GetInst()->Update();
+	}
+
 	ColliderManager::GetInst()->Update();
 }
 

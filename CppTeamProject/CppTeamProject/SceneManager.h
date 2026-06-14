@@ -1,6 +1,6 @@
 #pragma once
-// ¾îµð¼­µçÁö Á¢±Ù -> include
-// °´Ã¼ ÇÏ³ª¸¸ Á¸Àç -> static
+// ï¿½ï¿½ð¼­µï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> include
+// ï¿½ï¿½Ã¼ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> static
 #include "Utils.h"
 #include<map>
 #include<memory>
@@ -27,8 +27,11 @@ public:
 	void ChangeScene(const std::string& _sceneName);
 	void RegisterScene(const std::string& _sceneName,
 					std::unique_ptr<Scene> _scene);
+	std::string GetCurSceneName() const { return m_curSceneName; }
+	Scene* GetScene(const std::string& name);
 private:
 	static SceneManager* m_inst;
 	std::map<std::string, std::unique_ptr<Scene>> m_mapScenes;
 	Scene* m_curScene = nullptr;
+	std::string m_curSceneName;
 };

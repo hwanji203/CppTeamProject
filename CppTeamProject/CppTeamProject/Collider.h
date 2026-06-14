@@ -6,6 +6,7 @@ class Collider
 {
 public:
 	Collider(Vector2* pPos, int halfWidth, void* pOwner = nullptr);
+	~Collider();
 
 	int  GetLeft()  const;
 	int  GetRight() const;

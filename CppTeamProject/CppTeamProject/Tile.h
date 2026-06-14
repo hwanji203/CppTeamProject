@@ -1,5 +1,5 @@
 #pragma once
-// º®, ¹Ù´Ú, ¹®, °è´Ü
+// ï¿½ï¿½, ï¿½Ù´ï¿½, ï¿½ï¿½, ï¿½ï¿½ï¿½
 #include "Console.h"
 struct Tile
 {
@@ -22,7 +22,7 @@ struct Tile
 				color.first = Color::BLACK;
 				break;
 			case Tile::Type::GROUND:
-				symbol = "¡á"; // ¤±ÇÑÀÚ 2¹øÂ°ÁÙ 6¹ø
+				symbol = "ï¿½ï¿½"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½Â°ï¿½ï¿½ 6ï¿½ï¿½
 				color.first = Color::LIGHT_GRAY;
 				break;
 		}

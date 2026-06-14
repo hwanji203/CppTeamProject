@@ -112,7 +112,7 @@ int main()
 
         if (GetKey('A'))          playerRb.AddForce(-0.2f);
         if (GetKey('D'))          playerRb.AddForce( 0.2f);
-        if (GetKeyDown(VK_SPACE)) playerRb.StopMovement();
+        //if (GetKeyDown(VK_SPACE)) playerRb.StopMovement();
 
         playerHit = false;
         boxHit    = false;

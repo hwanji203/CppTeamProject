@@ -14,10 +14,6 @@ void TitleScene::Update()
 		EnterAnimation();
 		SceneManager::GetInst()->ChangeScene("GameScene");
 	}
-	if (GetKeyDown('S'))
-	{
-		SceneManager::GetInst()->ChangeScene("SettingUI");
-	}
 }
 
 void TitleScene::EnterAnimation()

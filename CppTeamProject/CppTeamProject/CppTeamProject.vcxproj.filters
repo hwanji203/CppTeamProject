@@ -46,6 +46,9 @@
     <Filter Include="Hwan\06. Module\Command">
       <UniqueIdentifier>{973d1ea0-64e6-4ef7-ad07-1e21bf4a6a70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="JJK\Settings">
+      <UniqueIdentifier>{a0306ede-0801-4d65-94ca-233585ff49b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Console.cpp">
@@ -116,6 +119,12 @@
     </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
       <Filter>Hwan\02. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingItem.cpp">
+      <Filter>JJK\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingUI.cpp">
+      <Filter>JJK\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,5 +209,15 @@
     <ClInclude Include="EnemyManager.h">
       <Filter>Hwan\02. Manager</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SettingItem.h">
+      <Filter>JJK\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingUI.h">
+      <Filter>JJK\Settings</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CppTeamProject.rc" />
   </ItemGroup>
 </Project>
