@@ -14,11 +14,15 @@ void TitleScene::Update()
 		EnterAnimation();
 		SceneManager::GetInst()->ChangeScene("GameScene");
 	}
+	if (GetKeyDown('S'))
+	{
+		SceneManager::GetInst()->ChangeScene("SettingUI");
+	}
 }
 
 void TitleScene::EnterAnimation()
 {
-	// À§ -> ¾Æ·¡
+	// ï¿½ï¿½ -> ï¿½Æ·ï¿½
 	for (int y = 0; y < m_resolution.y; ++y)
 	{
 		for (int x = 0; x < m_resolution.x; ++x)
@@ -30,7 +34,7 @@ void TitleScene::EnterAnimation()
 		Sleep(5);
 	}
 
-	// ¾Æ·¡ -> À§
+	// ï¿½Æ·ï¿½ -> ï¿½ï¿½
 	for (int y = m_resolution.y - 1; y>=0; --y)
 	{
 		for (int x = 0; x < m_resolution.x; ++x)
@@ -58,6 +62,10 @@ void TitleScene::Render()
 	cout << "----------";
 	GotoXY(startPos.x, startPos.y + 4);
 	cout << "  Space     ";
+	GotoXY(startPos.x, startPos.y + 5);
+	cout << "----------";
+	GotoXY(startPos.x, startPos.y + 6);
+	cout << "  S: Setting";
 }
 
 void TitleScene::Release()

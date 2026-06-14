@@ -3,13 +3,15 @@
 #include "Defines.h"
 #include "TitleScene.h"
 #include "GameScene.h"
+#include "SettingUI.h"
 #include "SceneManager.h"
 #include "ColliderManager.h"
 
 Core::Core()
 {
 	SceneManager::GetInst()->RegisterScene("TitleScene", std::make_unique<TitleScene>());
-	SceneManager::GetInst()->RegisterScene("GameScene", std::make_unique<GameScene>());
+	SceneManager::GetInst()->RegisterScene("GameScene",  std::make_unique<GameScene>());
+	SceneManager::GetInst()->RegisterScene("SettingUI",  std::make_unique<SettingUI>());
 	SceneManager::GetInst()->ChangeScene("TitleScene");
 }
 
