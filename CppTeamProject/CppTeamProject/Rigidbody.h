@@ -9,10 +9,15 @@ public:
 	void Tick(float deltaTime = 1.0f / 60.0f);
 
 	void AddForce(float force);
+	void AddForceY(float force);
 	void SetVelocity(float velocity);
 
 	void SetGrounded(bool grounded);
 	void SetGravityScale(float scale) { m_gravityScale = scale; }
+
+	// 프리즈: 켜져 있는 동안 수평 이동/마찰만 멈추고 수평 속도는 보존. 중력은 계속 적용됨.
+	void SetFrozen(bool frozen) { m_frozen = frozen; }
+	bool IsFrozen() const { return m_frozen; }
 
 	float GetVelocity()  const { return m_velocity; }
 	float GetVelocityY() const { return m_velocityY; }
@@ -32,4 +37,5 @@ private:
 	float m_accumY;
 
 	bool m_isGrounded;
+	bool m_frozen;
 };

@@ -1,21 +1,24 @@
 ﻿#include "Collider.h"
 
-Collider::Collider(Vector2* pPos, int halfWidth, void* pOwner)
+Collider::Collider(Vector2* pPos, int width, int height, void* pOwner, ColliderTag tag)
 	: m_pPos(pPos)
-	, m_halfWidth(halfWidth)
+	, m_width(width)
+	, m_height(height)
 	, m_pOwner(pOwner)
+	, m_tag(tag)
 	, m_onCollision(nullptr)
 {
 }
 
 int Collider::GetLeft() const
 {
-	return m_pPos->x - m_halfWidth;
+	return m_pPos->x;
 }
 
 int Collider::GetRight() const
 {
-	return m_pPos->x + m_halfWidth;
+	// 마지막 셀 다음의 경계선(half-open). [GetLeft, GetRight) 사이 셀을 차지.
+	return m_pPos->x + m_width;
 }
 
 int Collider::GetTop() const
@@ -25,7 +28,7 @@ int Collider::GetTop() const
 
 int Collider::GetBottom() const
 {
-	return m_pPos->y + 1; // height = 1
+	return m_pPos->y + m_height;
 }
 
 bool Collider::Overlaps(const Collider& other) const

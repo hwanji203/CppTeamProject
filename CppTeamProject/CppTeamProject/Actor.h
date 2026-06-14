@@ -1,9 +1,13 @@
 #pragma once
 #include "Vector2.h"
+#include<vector>
+#include<string>
+#include<memory>
+
 class Actor
 {
 public:
-	Actor(Vector2 _pos = { 0,0 });
+	Actor(Vector2 _pos = { 0,0 }, std::string renderIcon = ".");
 	virtual ~Actor() = default;
 
 	virtual void Tick() abstract;
@@ -17,6 +21,7 @@ public:
 	}
 protected:
 	Vector2 m_pos;
-	Vector2 m_prevPos;
+	std::unique_ptr<std::vector<Vector2>> m_prevPoses;
+	std::string m_renderIcon;
 };
 
