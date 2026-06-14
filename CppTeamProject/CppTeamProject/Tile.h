@@ -1,9 +1,9 @@
 #pragma once
-// 벽, 바닥, 문, 계단
+// ??, ???, ??, ???
 #include "Console.h"
 struct Tile
 {
-	enum class Type { EMPTY, GROUND, END } type;
+	enum class Type { EMPTY, GROUND, END, SPIKE } type;
 	bool blocked;
 	std::string symbol;
 	std::pair<Color, Color> color;
@@ -11,7 +11,7 @@ struct Tile
 		 Color textColor = Color::WHITE,
 		 Color bgColor = Color::BLACK)
 		: type(t)
-		, blocked(t == Type::GROUND)
+		, blocked(t == Type::GROUND || t == Type::SPIKE)
 		, symbol("")
 		, color(textColor, bgColor)
 	{
@@ -22,9 +22,13 @@ struct Tile
 				color.first = Color::BLACK;
 				break;
 			case Tile::Type::GROUND:
-				symbol = "■"; // ㅁ한자 2번째줄 6번
+				symbol = "■"; // ?????? 2??°?? 6??
 				color.first = Color::LIGHT_GRAY;
 				break;
+				case Tile::Type::SPIKE:
+					symbol = "▲";
+					color.first = Color::RED;
+					break;
 		}
 	}
 };

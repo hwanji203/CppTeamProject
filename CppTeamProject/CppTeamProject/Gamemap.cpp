@@ -13,35 +13,36 @@ GameMap::GameMap(int _w, int _h)
 
 GameMap::~GameMap()
 {
+    for (auto& collider : m_colliders)
+        ColliderManager::GetInst()->UnregisterCollider(&collider);
 
+    m_colliders.clear();
+    m_colliderPositions.clear();
 }
 
 void GameMap::Fill(const Tile& _t)
 {
-	// �ݺ���
 	for (auto& row : m_vecMapData)
 	{
 		std::fill(row.begin(), row.end(), _t);
 	}
 }
 
-void GameMap::Render(const Vector2& _playerPos) const
+void GameMap::Render() const
 {
 	for (int y = 0; y < m_height; ++y)
 	{
 		for (int x = 0; x < m_width / 2 - 1; ++x)
 		{
 			GotoXY(x * 2, y);
-			if (_playerPos == Vector2{ x,y })
-				continue;
 
-			// Ÿ���� ���
 			const Tile& tile = m_vecMapData[y][x];
+            if (tile.type == Tile::Type::EMPTY)
+                continue;
 			auto [textColor, bgColor] = tile.color;
 			SetColor(textColor, bgColor);
 			cout << tile.symbol; // ���� ����
 		}
-		//cout << endl;
 	}
 }
 
@@ -52,7 +53,6 @@ void GameMap::SetupCollider()
 
     int maxX = m_width / 2 - 1;
 
-    // 포인터 무효화 방지: 최대 blocked 타일 수만큼 예약 (재할당 시 등록된 포인터 무효화 방지)
     m_colliderPositions.reserve(m_height * maxX);
     m_colliders.reserve(m_height * maxX);
 
@@ -65,38 +65,40 @@ void GameMap::SetupCollider()
             if (!m_vecMapData[y][x].blocked || visited[y][x])
                 continue;
 
-            // BFS: 같은 행에서 좌우로만 확장
-            std::queue<int> q;
-            q.push(x);
-            visited[y][x] = true;
+            Tile::Type cat = m_vecMapData[y][x].type;
 
-            int minX = x, maxRunX = x;
+            int w = 1;
+            while (IsMergeable(y, x + w, cat, maxX, visited))
+                ++w;
 
-            while (!q.empty())
+            int h = 1;
+            bool canExpand = true;
+            while (y + h < m_height && canExpand)
             {
-                int cx = q.front(); q.pop();
-
-                for (int dx : {-1, 1})
+                for (int k = x; k < x + w; ++k)
                 {
-                    int nx = cx + dx;
-                    if (nx >= 0 && nx < maxX && !visited[y][nx] && m_vecMapData[y][nx].blocked)
+                    if (!IsMergeable(y + h, k, cat, maxX, visited))
                     {
-                        visited[y][nx] = true;
-                        q.push(nx);
-                        minX = std::min(minX, nx);
-                        maxRunX = std::max(maxRunX, nx);
+                        canExpand = false;
+                        break;
                     }
                 }
+                if (canExpand)
+                    ++h;
             }
 
-            // 짝수 길이 run은 오른쪽 1칸 오차 허용 (option B)
-            // 타일 → screen 좌표 변환 (x * 2)
-            int center_x = (minX + maxRunX) / 2 * 2;
-            int halfWidth = (center_x / 2 - minX) * 2;
+            for (int ry = y; ry < y + h; ++ry)
+                for (int k = x; k < x + w; ++k)
+                    visited[ry][k] = true;
 
-            m_colliderPositions.push_back(Vector2{ center_x, y });
+            int screenLeft  = x * 2;
+            int screenWidth = w * 2;
+
+            ColliderTag tag = (cat == Tile::Type::SPIKE) ? ColliderTag::SPIKE : ColliderTag::TILE;
+
+            m_colliderPositions.push_back(Vector2{ screenLeft, y });
             Vector2* pPos = &m_colliderPositions.back();
-            m_colliders.push_back(Collider(pPos, halfWidth, this));
+            m_colliders.push_back(Collider(pPos, screenWidth, h, this, tag));
             ColliderManager::GetInst()->RegisterCollider(&m_colliders.back());
         }
     }

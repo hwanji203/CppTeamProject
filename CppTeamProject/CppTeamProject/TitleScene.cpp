@@ -63,5 +63,3 @@ void TitleScene::Render()
 void TitleScene::Release()
 {
 }
-
-

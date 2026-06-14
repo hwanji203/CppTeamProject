@@ -1,12 +1,13 @@
 #include "GameScene.h"
 #include "TitleScene.h"
-#include "InputHandler.h"
 #include "Utils.h"
 #include "Pawn.h"
+#include "Player.h"
 #include "Types.h"
 #include "DefaultMapGenerator.h"
 #include "Defines.h"
 #include "ColliderManager.h"
+#include "SceneManager.h"
 
 Vector2 GameScene::GetSpawnPos() const
 {
@@ -21,30 +22,39 @@ Vector2 GameScene::GetSpawnPos() const
 void GameScene::Init()
 {
 	m_resolution = GetConsoleResolution();
-	m_inputHandler = std::make_unique<InputHandler>();
 	m_generator = std::make_unique<DefaultMapGenerator>();
 	m_gameMap = m_generator->Generate(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Vector2 startPos = GetSpawnPos();
-	m_player = std::make_unique<Pawn>(startPos);
+	m_player = std::make_unique<Player>(startPos);
+	EnemyManager::GetInst()->Init(2);
 }
 
 void GameScene::Update()
 {
-	ICommand* cmd = m_inputHandler->HandleInput();
-	if (cmd != nullptr)
-	{
-		cmd->Execute(m_player.get());
-	}
+	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos();
+
 	m_player->Tick();
+	EnemyManager::GetInst()->Update();
 }
 
 void GameScene::Render()
 {
-	m_gameMap->Render(m_player->GetPos());
+	Pawn& player = dynamic_cast<Pawn&>(*m_player);
+	if (player.IsDead() || player.IsLeaveDeadZone())
+	{
+		SceneManager::GetInst()->ChangeScene("TitleScene");
+		return;
+	}
+
 	m_player->Render();
+	EnemyManager::GetInst()->Render();
+	m_gameMap->Render();
 }
 
 void GameScene::Release()
 {
+	EnemyManager::GetInst()->Clear();
+	m_player.reset();                 
+	m_gameMap.reset();
+	m_generator.reset();
 }
-
