@@ -9,6 +9,8 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
+	UpdateInput(false);
+
 	if (GetKeyDown(VK_SPACE))
 	{
 		EnterAnimation();

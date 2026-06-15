@@ -25,7 +25,7 @@ public:
 	void Render();
 	void Clear();
 public:
-	void TrySpawnEnemyInRandomPos();
+	void TrySpawnEnemyInRandomPos(const Vector2* playerPos);
 private:
 	static EnemyManager* m_inst;
 	std::vector<std::unique_ptr<Enemy>> m_enemys;

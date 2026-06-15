@@ -26,7 +26,6 @@ void Core::Init()
 void Core::Update()
 {
 	ColliderManager::GetInst()->Update();
-	UpdateInput();
 
 	SceneManager::GetInst()->Update();
 }
@@ -52,7 +51,7 @@ void Core::Run()
 	{
 		Update();
 		Render();
-		FrameSync(500);
+		FrameSync(FRAME);
 	}
 }
 

@@ -13,4 +13,6 @@ public:
 
 private:
 	std::stack<int> m_velocityStack;
+	bool m_canMove;
+	ULONGLONG m_nextCanMove;
 };

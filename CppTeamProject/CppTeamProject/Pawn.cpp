@@ -6,8 +6,8 @@
 #include <cmath>
 #include <algorithm>
 
-Pawn::Pawn(Vector2 _pos, std::string renderIcon, Vector2 deadZone, ColliderTag tag)
-	: Actor(_pos, renderIcon)
+Pawn::Pawn(Vector2 _pos, Color renderColor, std::string renderIcon, Vector2 deadZone, ColliderTag tag)
+	: Actor(_pos, renderColor, renderIcon)
 	, m_deadZone(deadZone)
 	, m_rigidbody(std::make_unique<Rigidbody>(&m_pos))
 	, m_collider(std::make_unique<Collider>(&m_pos, 1, 1, this, tag))  // 폭 1셀 × 높이 1셀, 좌상단 = m_pos
@@ -55,26 +55,26 @@ void Pawn::OnCollision(Collider* other)
 
 	if (tag == ColliderTag::TILE)
 	{
-		int pl = m_collider->GetLeft();
-		int pr = m_collider->GetRight();
-		int pt = m_collider->GetTop();
-		int pb = m_collider->GetBottom();
+		int ml = m_collider->GetLeft();
+		int mr = m_collider->GetRight();
+		int mt = m_collider->GetTop();
+		int mb = m_collider->GetBottom();
 
 		int ol = other->GetLeft();
 		int orr = other->GetRight();
 		int ot = other->GetTop();
 		int ob = other->GetBottom();
 
-		int overlapX = std::min(pr, orr) - std::max(pl, ol);
-		int overlapY = std::min(pb, ob) - std::max(pt, ot);
+		int overlapX = std::min(mr, orr) - std::max(ml, ol);
+		int overlapY = std::min(mb, ob) - std::max(mt, ot);
 		if (overlapX < 0 || overlapY < 0)
 			return;
 
 		if (overlapY <= overlapX)
 		{
-			int pCenterY = (pt + pb) / 2;
+			int mCenterY = (mt + mb) / 2;
 			int oCenterY = (ot + ob) / 2;
-			if (pCenterY <= oCenterY)
+			if (mCenterY <= oCenterY)
 			{
 				m_pos.y = ot - m_collider->GetHeight();
 				m_rigidbody->SetGrounded(true);
@@ -86,7 +86,7 @@ void Pawn::OnCollision(Collider* other)
 		}
 		else if (overlapX > 0)
 		{
-			int pCenterX = (pl + pr) / 2;
+			int pCenterX = (ml + mr) / 2;
 			int oCenterX = (ol + orr) / 2;
 			if (pCenterX <= oCenterX)
 				m_pos.x = ol - m_collider->GetWidth();
@@ -102,7 +102,13 @@ void Pawn::OnCollision(Collider* other)
 		float knockX = std::max(speed, KNOCKBACK_MIN) * KNOCKBACK_SCALE;
 		m_rigidbody->SetGrounded(false);
 		m_rigidbody->AddForce(dir * knockX);
-		m_rigidbody->AddForceY(-KNOCKBACK_Y);
+
+		if (tag == ColliderTag::ENEMY && m_collider->GetTag() == ColliderTag::PLAYER)
+		{
+			if (m_rigidbody->IsFrozen())
+				m_rigidbody->SetFrozen(false);
+			m_rigidbody->AddForceY(-KNOCKBACK_Y * knockX);
+		}
 	}
 }
 
@@ -116,7 +122,7 @@ void Pawn::Render() const
 {
 	RemovePrevPos();
 
-	SetColor(Color::SKYBLUE);
+	SetColor(m_renderColor);
 	GotoXY(m_pos.x, m_pos.y);
 	cout << m_renderIcon;
 

@@ -31,7 +31,9 @@ void GameScene::Init()
 
 void GameScene::Update()
 {
-	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos();
+	UpdateInput(true);
+
+	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos(m_player->GetPos());
 
 	m_player->Tick();
 	EnemyManager::GetInst()->Update();
@@ -39,6 +41,8 @@ void GameScene::Update()
 
 void GameScene::Render()
 {
+	m_gameMap->Render();
+
 	Pawn& player = dynamic_cast<Pawn&>(*m_player);
 	if (player.IsDead() || player.IsLeaveDeadZone())
 	{
@@ -46,9 +50,8 @@ void GameScene::Render()
 		return;
 	}
 
-	m_player->Render();
 	EnemyManager::GetInst()->Render();
-	m_gameMap->Render();
+	m_player->Render();
 }
 
 void GameScene::Release()

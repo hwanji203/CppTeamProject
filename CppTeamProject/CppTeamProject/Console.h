@@ -57,7 +57,7 @@ void DrawBar(int x, int y, const string& label,
 bool GetKey(int vKey);
 bool GetKeyDown(int vKey);
 POINT GetMouseCellPos();
-void UpdateInput();
+void UpdateInput(bool lockCursor);
 void FrameSync(int fps);
 
 int GetMouseWheelChange();

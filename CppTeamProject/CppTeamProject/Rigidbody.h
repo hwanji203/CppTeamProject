@@ -1,10 +1,11 @@
 #pragma once
 #include "Vector2.h"
+#include "Defines.h"
 
 class Rigidbody
 {
 public:
-	Rigidbody(Vector2* pPos, float friction = 0.85f, float maxSpeed = 20.0f, float gravityScale = 1.0f);
+	Rigidbody(Vector2* pPos, float friction = 0.85f, float maxSpeed = 3.0f, float gravityScale = 1.0f);
 
 	void Tick(float deltaTime = 1.0f / 60.0f);
 
@@ -18,6 +19,8 @@ public:
 	// 프리즈: 켜져 있는 동안 수평 이동/마찰만 멈추고 수평 속도는 보존. 중력은 계속 적용됨.
 	void SetFrozen(bool frozen) { m_frozen = frozen; }
 	bool IsFrozen() const { return m_frozen; }
+
+	void SetFriction(float friction) { m_friction = friction; }
 
 	float GetVelocity()  const { return m_velocity; }
 	float GetVelocityY() const { return m_velocityY; }
