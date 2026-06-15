@@ -22,13 +22,13 @@ public:
     int GetDifficultyIndex() const { return m_items[2].GetCurrentIndex(); }
 
 private:
-    void ClearScreen();
     void DrawBox();
     void DrawItems();
 
 private:
     vector<SettingItem> m_items;
     int m_selectedIdx;
+    int m_prevSelectedIdx;
     string m_prevSceneName;
     bool m_justOpened;
 };

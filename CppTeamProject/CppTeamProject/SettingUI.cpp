@@ -51,7 +51,7 @@ void SettingUI::Update()
 
 void SettingUI::Render()
 {
-    ClearScreen();
+    GotoXY(0, 0);
     DrawBox();
     DrawItems();
 }
@@ -59,17 +59,6 @@ void SettingUI::Render()
 void SettingUI::Release()
 {
     m_items.clear();
-}
-
-void SettingUI::ClearScreen()
-{
-    SetColor(Color::WHITE, Color::BLACK);
-    for (int y = 0; y < SCREEN_HEIGHT; ++y)
-    {
-        GotoXY(0, y);
-        for (int x = 0; x < SCREEN_WIDTH; ++x)
-            cout << ' ';
-    }
 }
 
 void SettingUI::DrawBox()

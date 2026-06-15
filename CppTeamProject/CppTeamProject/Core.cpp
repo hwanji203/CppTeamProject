@@ -30,7 +30,7 @@ void Core::Update()
 	UpdateInput();
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
-	if (GetKeyDown(VK_ESCAPE) && curScene != "SettingUI")
+	if (GetKeyDown('Q') && curScene != "SettingUI")
 	{
 		SettingUI* setting = static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
 		if (setting)
