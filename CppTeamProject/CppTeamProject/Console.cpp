@@ -284,13 +284,19 @@ bool GetKeyDown(int vKey)
 void FrameSync(int fps)
 {
 	static ULONGLONG prevTick = GetTickCount64();
+	static int cnt = 0;
 
 	ULONGLONG curTick = GetTickCount64();
 	ULONGLONG elapsed = curTick - prevTick;
 	ULONGLONG targetTick = 1000 / fps;
 	//ULONGLONG targetTick =  / fps;
 	if (elapsed < targetTick)
+	{
+		cnt++;
 		Sleep(targetTick - elapsed);
+	}
+	GotoXY(3, 3);
+	cout << cnt;
 	prevTick = GetTickCount64();
 }
 
@@ -317,12 +323,23 @@ POINT GetMouseCellPos()
 	return cellPos;
 }
 
-void UpdateInput()
+void UpdateInput(bool lockCursor)
 {
 	for (int i = 0; i < 256; ++i)
 	{
 		prevDown[i] = curDown[i];
 		curDown[i] = GetAsyncKeyState(i) & 0x8000;
+	}
+
+	if (lockCursor)
+	{
+		RECT rect;
+		GetWindowRect(GetConsoleWindow(), &rect); // 콘솔 창의 화면 좌표(좌,우,상,하)를 가져옴
+		rect.bottom -= 50;
+		rect.left += 50;
+		rect.right -= 50;
+		rect.top += 50;
+		ClipCursor(&rect);
 	}
 
 	mouseWheelDelta = 0;
@@ -346,4 +363,6 @@ void UpdateInput()
 			}
 		}
 	}
+
+	ClipCursor(NULL);
 }

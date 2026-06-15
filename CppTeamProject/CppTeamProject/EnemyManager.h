@@ -7,7 +7,7 @@
 class EnemyManager
 {
 private:
-	EnemyManager(ULONGLONG spawnDelay = 100);
+	EnemyManager() = default;
 public:
 	static EnemyManager* GetInst()
 	{
@@ -21,11 +21,14 @@ public:
 	}
 
 	void Init(float spawnDelay);
+	void Update();
+	void Render();
+	void Clear();
 public:
-	void TrySpawnEnemyInRandomPos();
+	void TrySpawnEnemyInRandomPos(const Vector2* playerPos);
 private:
 	static EnemyManager* m_inst;
 	std::vector<std::unique_ptr<Enemy>> m_enemys;
-	ULONGLONG m_spawnDelay;
-	ULONGLONG m_nextSpawnTime;
+	ULONGLONG m_spawnDelay = 0;
+	ULONGLONG m_nextSpawnTime = 0;
 };

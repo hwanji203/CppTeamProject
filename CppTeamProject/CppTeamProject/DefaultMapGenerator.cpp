@@ -2,21 +2,34 @@
 
 std::unique_ptr<GameMap> DefaultMapGenerator::Generate(int _width, int _height)
 {
-    m_groundY = _height * 3 / 4;   // �ٴ� ���� (�Ʒ���)
-    m_edgeGap = _height * 8 / 10;  // ���� ���� ����� ĭ ��
+    m_groundY = _height * 3 / 4;
 
     auto map = std::make_unique<GameMap>(_width, _height);
 
-    // 1. �� ��ü�� �� ����(EMPTY)���� ä��
     map->Fill(Tile::Type::EMPTY);
 
-    // 2. �ٴ�(GROUND)�� ���η� ��� ��
-    //    - ���� ��ġ: ȭ�� �Ʒ��� (������ 3/4 ����)
-    //    - ���� ���� ����� �� ������ ���� ������
+    const int maxX       = _width / 2 - 1;
+    const int leftWallX  = 0;
+    const int rightWallX = maxX - 1;
+    const int bottomY    = _height - 1;
 
-    for (int x = m_edgeGap; x < _width / 2 - m_edgeGap; ++x)
+    for (int y = 0; y < _height; ++y)
+    {
+        map->SetTile(leftWallX,  y, Tile::Type::GROUND);
+        map->SetTile(rightWallX, y, Tile::Type::GROUND);
+    }
+
+    const int floorStart = maxX / 4;
+    const int floorEnd   = maxX * 3 / 4;
+    for (int x = floorStart; x <= floorEnd; ++x)
     {
         map->SetTile(x, m_groundY, Tile::Type::GROUND);
+    }
+
+    // 4. �� �Ʒ��� ���� (�¿� �� ����) - �������� ���
+    for (int x = leftWallX + 1; x < rightWallX; ++x)
+    {
+        map->SetTile(x, bottomY, Tile::Type::SPIKE);
     }
 
     map->SetupCollider();

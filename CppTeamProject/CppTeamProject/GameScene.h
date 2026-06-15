@@ -3,7 +3,6 @@
 #include<memory>
 #include "Vector2.h"
 #include "Actor.h"
-#include "InputHandler.h"
 #include "MapGenerator.h"
 #include "GameMap.h"
 #include "EnemyManager.h"
@@ -22,7 +21,6 @@ private:
 private:
     Vector2 m_resolution;
     std::unique_ptr<Actor> m_player;
-    std::unique_ptr<InputHandler> m_inputHandler;
     std::unique_ptr<MapGenerator> m_generator;
     std::unique_ptr<GameMap> m_gameMap;
     std::unique_ptr<EnemyManager> m_enemyManager;

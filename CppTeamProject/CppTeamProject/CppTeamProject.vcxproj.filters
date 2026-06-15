@@ -102,9 +102,6 @@
     <ClCompile Include="JJK_Main.cpp">
       <Filter>JJK\01. Core</Filter>
     </ClCompile>
-    <ClCompile Include="CommandPool.cpp">
-      <Filter>Hwan\06. Module\Command</Filter>
-    </ClCompile>
     <ClCompile Include="ICommand.cpp">
       <Filter>Hwan\06. Module\Command</Filter>
     </ClCompile>
@@ -115,6 +112,9 @@
       <Filter>Hwan\06. Module\Command</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
       <Filter>Hwan\03. Actor</Filter>
     </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
@@ -164,6 +164,9 @@
     <ClInclude Include="Pawn.h">
       <Filter>Hwan\03. Actor</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClInclude>
     <ClInclude Include="Enums.h">
       <Filter>Hwan\99. Headers</Filter>
     </ClInclude>
@@ -190,9 +193,6 @@
     </ClInclude>
     <ClInclude Include="ColliderManager.h">
       <Filter>JJK\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandPool.h">
-      <Filter>Hwan\06. Module\Command</Filter>
     </ClInclude>
     <ClInclude Include="ICommand.h">
       <Filter>Hwan\06. Module\Command</Filter>

@@ -27,7 +27,7 @@ void Core::Init()
 
 void Core::Update()
 {
-	UpdateInput();
+	ColliderManager::GetInst()->Update();
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
 	if (GetKeyDown('Q') && curScene != "SettingUI")
@@ -52,8 +52,11 @@ void Core::Render()
 
 Core::~Core()
 {
-	ColliderManager::GetInst()->DestroyInst();
+	// 씬/맵이 소멸하면서 ColliderManager에서 콜라이더를 해제하므로
+	// SceneManager를 먼저 파괴한 뒤 ColliderManager를 파괴한다.
 	SceneManager::GetInst()->DestroyInst();
+	EnemyManager::GetInst()->DestroyInst();
+	ColliderManager::GetInst()->DestroyInst();
 }
 
 void Core::Run()
@@ -63,7 +66,7 @@ void Core::Run()
 	{
 		Update();
 		Render();
-		FrameSync(60);
+		FrameSync(FRAME);
 	}
 }
 

@@ -3,7 +3,7 @@ struct Vector2
 {
 	int x;
 	int y;
-	bool operator ==(const Vector2& _other)
+	bool operator ==(const Vector2& _other) const
 	{
 		return x == _other.x && y == _other.y;
 	}

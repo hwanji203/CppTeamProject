@@ -16,6 +16,7 @@ Rigidbody::Rigidbody(Vector2* pPos, float friction, float maxSpeed, float gravit
 	, m_accumX(0.f)
 	, m_accumY(0.f)
 	, m_isGrounded(false)
+	, m_frozen(false)
 {
 }
 
@@ -24,23 +25,30 @@ void Rigidbody::Tick(float deltaTime)
 	if (!m_pPos)
 		return;
 
-	m_velocity *= m_friction;
-
-	if (std::fabs(m_velocity) < 0.01f)
+	// 프리즈 중에는 수평 이동/마찰만 멈추고 속도는 보존. (중력은 계속 적용)
+	if (!m_frozen)
 	{
-		m_velocity = 0.f;
-		m_accumX   = 0.f;
-	}
-	else
-	{
-		m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
+		if (m_velocity < 0.1f && m_velocity > -0.1f)
+			m_velocity = 0;
 
-		m_accumX += m_velocity * deltaTime * FRAME;
-		int stepsX = static_cast<int>(m_accumX);
-		if (stepsX != 0)
+		m_velocity *= m_friction;
+
+		if (std::fabs(m_velocity) < 0.01f)
 		{
-			m_pPos->x += stepsX;
-			m_accumX  -= static_cast<float>(stepsX);
+			m_velocity = 0.f;
+			m_accumX   = 0.f;
+		}
+		else
+		{
+			m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
+
+			m_accumX += m_velocity * deltaTime * FRAME;
+			int stepsX = static_cast<int>(m_accumX);
+			if (stepsX != 0)
+			{
+				m_pPos->x += stepsX;
+				m_accumX  -= static_cast<float>(stepsX);
+			}
 		}
 	}
 
@@ -63,6 +71,12 @@ void Rigidbody::AddForce(float force)
 {
 	m_velocity += force;
 	m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
+}
+
+void Rigidbody::AddForceY(float force)
+{
+	m_velocityY += force;
+	m_velocityY = std::clamp(m_velocityY, -MAX_FALL_SPEED, MAX_FALL_SPEED);
 }
 
 void Rigidbody::SetVelocity(float velocity)
