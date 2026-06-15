@@ -10,7 +10,7 @@ public:
     ~GameMap();
 public:
     void Fill(const Tile& _t);
-    void Render(const Vector2& _playerPos) const;
+    void Render() const;
     void SetupCollider();
 public:
     void SetTile(int _x, int _y, Tile _t)
@@ -24,6 +24,12 @@ public:
     const Tile::Type& GetTileType(int _x, int _y) const
     {
         return m_vecMapData[_y][_x].type;
+    }
+    bool IsMergeable(int y, int x, Tile::Type cat, int maxX, std::vector<std::vector<bool>>& visited)
+    {
+        return x >= 0 && x < maxX && y >= 0 && y < this->m_height
+            && !visited[y][x] && m_vecMapData[y][x].blocked
+            && m_vecMapData[y][x].type == cat;
     }
 private:
     int m_width;

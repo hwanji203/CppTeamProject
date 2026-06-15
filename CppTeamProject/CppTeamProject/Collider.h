@@ -2,11 +2,13 @@
 #include "Vector2.h"
 #include <functional>
 
+enum class ColliderTag { TILE, PLAYER, ENEMY, SPIKE };
+
 class Collider
 {
 public:
-	Collider(Vector2* pPos, int halfWidth, void* pOwner = nullptr);
-	~Collider();
+	// pPos는 박스의 좌상단(스크린 좌표). width/height는 차지하는 셀 수.
+	Collider(Vector2* pPos, int width, int height = 1, void* pOwner = nullptr, ColliderTag tag = ColliderTag::PLAYER);
 
 	int  GetLeft()  const;
 	int  GetRight() const;
@@ -17,13 +19,17 @@ public:
 	void SetOnCollision(std::function<void(Collider*)> callback);
 	void InvokeCollision(Collider* other);
 
-	void* GetOwner() const { return m_pOwner; }
-	int   GetHalfWidth() const { return m_halfWidth; }
+	void*        GetOwner()    const { return m_pOwner; }
+	int          GetWidth()  const { return m_width; }
+	int          GetHeight() const { return m_height; }
+	ColliderTag  GetTag()       const { return m_tag; }
 
 private:
-	Vector2* m_pPos;
-	int       m_halfWidth;
-	void*     m_pOwner; 
+	Vector2*    m_pPos;
+	int         m_width;
+	int         m_height;
+	void*       m_pOwner;
+	ColliderTag m_tag;
 
 	std::function<void(Collider*)> m_onCollision;
 };
