@@ -17,5 +17,4 @@ public:
 private:
 	int m_power;
 	const Vector2* m_playerPos;
-	bool m_isSetVelocity;
 };

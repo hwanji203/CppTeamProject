@@ -147,7 +147,6 @@
     <ClCompile Include="MapGenerator.cpp" />
     <ClCompile Include="SettingItem.cpp" />
     <ClCompile Include="SettingUI.cpp" />
-    <ClCompile Include="VelocityCommand.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
@@ -173,7 +172,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SettingItem.h" />
     <ClInclude Include="SettingUI.h" />
-    <ClInclude Include="VelocityCommand.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Vector2.h" />

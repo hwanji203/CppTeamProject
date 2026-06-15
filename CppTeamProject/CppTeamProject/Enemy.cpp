@@ -1,33 +1,28 @@
-#include "Enemy.h"
+﻿#include "Enemy.h"
 #include "Console.h"
 #include "ColliderManager.h"
 #include "Defines.h"
 
 Enemy::Enemy(const Vector2* playerPos, int power, Vector2 pos)
-	: Pawn(pos, Color::RED, "��", { SCREEN_WIDTH, SCREEN_HEIGHT }, ColliderTag::ENEMY),
+	: Pawn(pos, Color::LIGHT_RED, "★", { SCREEN_WIDTH, SCREEN_HEIGHT }, ColliderTag::ENEMY),
 	m_power(power),
-	m_playerPos(playerPos),
-	m_isSetVelocity(false)
+	m_playerPos(playerPos)
 {
-	m_rigidbody->SetFriction(1);
+	m_rigidbody->SetMaxSpeed(0.25f);
 }
 
 void Enemy::Tick()
 {
-	if (m_isSetVelocity == false)
+	if (m_rigidbody->IsGrounded())
 	{
-		if (m_rigidbody->IsGrounded())
-		{
-			int dir = 0;
-			
-			if ((m_playerPos->x - m_pos.x) > 0)
-				dir = 1;
-			else if ((m_playerPos->x - m_pos.x) < 0)
-				dir = -1;
+		int dir = 0;
 
-			m_rigidbody->SetVelocity(dir * ENEMY_SPEED);
-			m_isSetVelocity = true;
-		}
+		if ((m_playerPos->x - m_pos.x) > 0)
+			dir = 1;
+		else if ((m_playerPos->x - m_pos.x) < 0)
+			dir = -1;
+
+		m_rigidbody->AddForce(dir * ENEMY_SPEED);
 	}
 
 	Pawn::Tick();

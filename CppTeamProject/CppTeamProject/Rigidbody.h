@@ -21,6 +21,7 @@ public:
 	bool IsFrozen() const { return m_frozen; }
 
 	void SetFriction(float friction) { m_friction = friction; }
+	void SetMaxSpeed(float maxSpeed) { m_maxSpeed = maxSpeed; }
 
 	float GetVelocity()  const { return m_velocity; }
 	float GetVelocityY() const { return m_velocityY; }

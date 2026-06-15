@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 // ??, ???, ??, ???
 #include "Console.h"
 struct Tile
@@ -22,11 +22,11 @@ struct Tile
 				color.first = Color::BLACK;
 				break;
 			case Tile::Type::GROUND:
-				symbol = "��"; // ?????? 2??��?? 6??
+				symbol = "■"; // ?????? 2??��?? 6??
 				color.first = Color::LIGHT_GRAY;
 				break;
 				case Tile::Type::SPIKE:
-					symbol = "��";
+					symbol = "▲";
 					color.first = Color::RED;
 					break;
 		}

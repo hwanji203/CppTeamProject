@@ -6,6 +6,7 @@
 #include "SettingUI.h"
 #include "SceneManager.h"
 #include "ColliderManager.h"
+#include "EnemyManager.h"
 #include <string>
 
 Core::Core()
@@ -28,6 +29,7 @@ void Core::Init()
 void Core::Update()
 {
 	ColliderManager::GetInst()->Update();
+	EnemyManager::GetInst()->Update();
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
 	if (GetKeyDown(VK_ESCAPE) && curScene != "SettingUI")

@@ -17,11 +17,6 @@ Pawn::Pawn(Vector2 _pos, Color renderColor, std::string renderIcon, Vector2 dead
 	ColliderManager::GetInst()->RegisterCollider(m_collider.get());
 }
 
-Pawn::~Pawn()
-{
-	ColliderManager::GetInst()->UnregisterCollider(m_collider.get());
-}
-
 void Pawn::SetVelocity(float velocityX)
 {
 	m_rigidbody->AddForce(velocityX);
@@ -103,12 +98,7 @@ void Pawn::OnCollision(Collider* other)
 		m_rigidbody->SetGrounded(false);
 		m_rigidbody->AddForce(dir * knockX);
 
-		if (tag == ColliderTag::ENEMY && m_collider->GetTag() == ColliderTag::PLAYER)
-		{
-			if (m_rigidbody->IsFrozen())
-				m_rigidbody->SetFrozen(false);
-			m_rigidbody->AddForceY(-KNOCKBACK_Y * knockX);
-		}
+		m_rigidbody->AddForceY(-KNOCKBACK_Y);
 	}
 }
 
