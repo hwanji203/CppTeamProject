@@ -11,7 +11,10 @@ public:
 
 	void AddForce(float force);
 	void AddForceY(float force);
+	void AddKnockback(float forceX, float forceY);   // 수평/수직 동시 임펄스 + 넉백 윈도우 시작
 	void SetVelocity(float velocity);
+
+	bool IsKnockback() const { return m_knockbackFrames > 0; }
 
 	void SetGrounded(bool grounded);
 	void SetGravityScale(float scale) { m_gravityScale = scale; }
@@ -42,4 +45,6 @@ private:
 
 	bool m_isGrounded;
 	bool m_frozen;
+
+	int  m_knockbackFrames = 0;   // >0 동안 넉백 진행 중(maxSpeed 클램프/deadzone 무시)
 };

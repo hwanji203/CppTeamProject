@@ -28,19 +28,24 @@ void Rigidbody::Tick(float deltaTime)
 	// 프리즈 중에는 수평 이동/마찰만 멈추고 속도는 보존. (중력은 계속 적용)
 	if (!m_frozen)
 	{
-		if (m_velocity < 0.1f && m_velocity > -0.1f)
+		const bool knock = (m_knockbackFrames > 0);
+
+		// 넉백 중에는 deadzone 정지 처리를 건너뛰어 임펄스가 깎이지 않게 한다.
+		if (!knock && m_velocity < 0.1f && m_velocity > -0.1f)
 			m_velocity = 0;
 
 		m_velocity *= m_friction;
 
-		if (std::fabs(m_velocity) < 0.01f)
+		if (!knock && std::fabs(m_velocity) < 0.01f)
 		{
 			m_velocity = 0.f;
 			m_accumX   = 0.f;
 		}
 		else
 		{
-			m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
+			// 넉백 중에는 maxSpeed가 아닌 넉백 상한으로 클램프(적의 느린 속도에 묶이지 않음).
+			const float cap = knock ? KNOCKBACK_MAX : m_maxSpeed;
+			m_velocity = std::clamp(m_velocity, -cap, cap);
 
 			m_accumX += m_velocity * deltaTime * FRAME;
 			int stepsX = static_cast<int>(m_accumX);
@@ -65,6 +70,9 @@ void Rigidbody::Tick(float deltaTime)
 		m_pPos->y += stepsY;
 		m_accumY  -= static_cast<float>(stepsY);
 	}
+
+	if (m_knockbackFrames > 0)
+		--m_knockbackFrames;
 }
 
 void Rigidbody::AddForce(float force)
@@ -77,6 +85,18 @@ void Rigidbody::AddForceY(float force)
 {
 	m_velocityY += force;
 	m_velocityY = std::clamp(m_velocityY, -MAX_FALL_SPEED, MAX_FALL_SPEED);
+}
+
+void Rigidbody::AddKnockback(float forceX, float forceY)
+{
+	m_velocity += forceX;
+	m_velocity = std::clamp(m_velocity, -KNOCKBACK_MAX, KNOCKBACK_MAX);
+
+	m_velocityY += forceY;
+	m_velocityY = std::clamp(m_velocityY, -MAX_FALL_SPEED, MAX_FALL_SPEED);
+
+	m_isGrounded      = false;
+	m_knockbackFrames = KNOCKBACK_DURATION;
 }
 
 void Rigidbody::SetVelocity(float velocity)

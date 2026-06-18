@@ -47,13 +47,13 @@ void EnemyManager::Clear()
 	m_nextSpawnTime = 0;
 }
 
-void EnemyManager::TrySpawnEnemyInRandomPos(const Vector2* playerPos)
+void EnemyManager::TrySpawnEnemyInRandomPos(const Vector2* playerPos, int groundLength)
 {
     ULONGLONG cur = GetTickCount64();
     if (m_nextSpawnTime < cur)
     {
         m_nextSpawnTime = cur + m_spawnDelay;
-        Vector2 startPos = { (std::rand() % (SCREEN_WIDTH / 2)) * 2, 0 };
+        Vector2 startPos = { SCREEN_WIDTH / 2 + (std::rand() % groundLength), 0 };
         auto enemy = std::make_unique<Enemy>(playerPos, 1, startPos);
         m_enemys.push_back(move(enemy));
     }

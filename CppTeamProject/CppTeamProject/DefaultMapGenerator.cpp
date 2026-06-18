@@ -21,6 +21,7 @@ std::unique_ptr<GameMap> DefaultMapGenerator::Generate(int _width, int _height)
 
     const int floorStart = maxX / 4;
     const int floorEnd   = maxX * 3 / 4;
+    map->SetGroundLength(floorEnd - floorStart);
     for (int x = floorStart; x <= floorEnd; ++x)
     {
         map->SetTile(x, m_groundY, Tile::Type::GROUND);

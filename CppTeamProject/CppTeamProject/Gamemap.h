@@ -12,6 +12,8 @@ public:
     void Fill(const Tile& _t);
     void Render() const;
     void SetupCollider();
+    int GetGroundLength() { return m_groundLength; }
+    void SetGroundLength(int length) { m_groundLength = length; }
 public:
     void SetTile(int _x, int _y, Tile _t)
     {
@@ -36,6 +38,7 @@ private:
     int m_height;
     std::vector<std::vector<Tile>> m_vecMapData;
     std::vector<Collider> m_colliders;
+    int m_groundLength;
 
     // Collider�� ������ Vector2 ��ü���� �޸𸮿��� ������� �ʵ��� �����ϴ� ����Դϴ�.
     std::vector<Vector2> m_colliderPositions;

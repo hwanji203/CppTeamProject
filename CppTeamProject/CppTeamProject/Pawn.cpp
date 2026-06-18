@@ -71,8 +71,12 @@ void Pawn::OnCollision(Collider* other)
 			int oCenterY = (ot + ob) / 2;
 			if (mCenterY <= oCenterY)
 			{
-				m_pos.y = ot - m_collider->GetHeight();
-				m_rigidbody->SetGrounded(true);
+				// 넉백 중에는 착지/grounding을 막아 솟구치는 속도가 지워지지 않게 한다.
+				if (!m_rigidbody->IsKnockback())
+				{
+					m_pos.y = ot - m_collider->GetHeight();
+					m_rigidbody->SetGrounded(true);
+				}
 			}
 			else if (overlapY > 0)
 			{
@@ -91,14 +95,17 @@ void Pawn::OnCollision(Collider* other)
 	}
 	else if (tag == ColliderTag::ENEMY || tag == ColliderTag::PLAYER)
 	{
+		// 넉백이 진행 중이면 매 프레임 누적되지 않도록 재적용을 막는다(1회성).
+		if (m_rigidbody->IsKnockback())
+			return;
+
 		int otherCenterX = (other->GetLeft() + other->GetRight()) / 2;
 		int dir = (m_pos.x < otherCenterX) ? -1 : 1;
 		float speed = std::abs(m_rigidbody->GetVelocity());
-		float knockX = std::max(speed, KNOCKBACK_MIN) * KNOCKBACK_SCALE;
-		m_rigidbody->SetGrounded(false);
-		m_rigidbody->AddForce(dir * knockX);
+		float knockX = std::max(speed, KNOCKBACK_X);
 
-		m_rigidbody->AddForceY(-KNOCKBACK_Y);
+		// 수평 + 수직 동시 임펄스. (X는 maxSpeed가 아닌 KNOCKBACK_MAX까지 허용됨)
+		m_rigidbody->AddKnockback(dir * knockX, -KNOCKBACK_Y);
 	}
 }
 

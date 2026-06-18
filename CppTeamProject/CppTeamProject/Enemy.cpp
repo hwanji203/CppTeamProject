@@ -22,7 +22,7 @@ void Enemy::Tick()
 		else if ((m_playerPos->x - m_pos.x) < 0)
 			dir = -1;
 
-		m_rigidbody->AddForce(dir * ENEMY_SPEED);
+		//m_rigidbody->AddForce(dir * ENEMY_SPEED);
 	}
 
 	Pawn::Tick();

@@ -33,7 +33,7 @@ void GameScene::Update()
 {
 	UpdateInput(true);
 
-	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos(m_player->GetPos());
+	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos(m_player->GetPos(), m_gameMap->GetGroundLength());
 
 	m_player->Tick();
 	EnemyManager::GetInst()->Update();
