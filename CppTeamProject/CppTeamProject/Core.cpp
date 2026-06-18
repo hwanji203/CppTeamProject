@@ -8,6 +8,7 @@
 #include "ColliderManager.h"
 #include "EnemyManager.h"
 #include <string>
+#include "SoundManager.h"
 
 Core::Core()
 {

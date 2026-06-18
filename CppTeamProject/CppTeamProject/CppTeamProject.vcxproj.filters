@@ -117,6 +117,9 @@
     <ClCompile Include="SettingUI.cpp">
       <Filter>JJK\Settings</Filter>
     </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Console.h">
@@ -197,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="SettingUI.h">
       <Filter>JJK\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Hwan\02. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

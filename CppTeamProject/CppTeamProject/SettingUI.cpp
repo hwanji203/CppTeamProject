@@ -85,7 +85,7 @@ void SettingUI::DrawBox()
 
     SetColor(Color::WHITE, Color::BLACK);
     GotoXY(BOX_X + BOX_W / 2 - 4, BOX_Y + 1);
-    cout << "[ ì„¤ì • ]";
+    cout << "[ ¼³Á¤ ]";
 }
 
 void SettingUI::DrawItems()
@@ -117,7 +117,7 @@ void SettingUI::DrawItems()
 
     SetColor(Color::GRAY, Color::BLACK);
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 4);
-    cout << "Up/Dn : ì´ë™  Lt/Rt : ë³€ê²½";
+    cout << "Up/Dn : ÀÌµ¿  Lt/Rt : º¯°æ";
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 3);
-    cout << "ESC : ë’¤ë¡œê°€ê¸°";
+    cout << "ESC : µÚ·Î°¡±â";
 }
