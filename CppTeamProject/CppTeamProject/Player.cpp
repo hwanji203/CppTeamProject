@@ -176,7 +176,9 @@ void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 	// 색이 다르면(크리티컬 X): 기존 로직(넉백) + 체력 1 감소.
 	if (--m_hp <= 0)
 	{
-		// 체력이 0이 되면 패배.
+		// 체력이 0이 되면 패배. 전환 전에 HP 바를 0으로 갱신해 사망 진동 동안 0이 보이게 한다.
+		// (좌표/형식은 GameScene::DrawHud의 HP 바와 동일해야 함)
+		DrawBar(2, 0, "HP ", m_hp, m_maxHp, m_maxHp);
 		ConsoleShakeRestore();
 		ShakeConsoleWindow(DEATH_SHAKE_INTENSITY, DEATH_SHAKE_DURATION, DEATH_SHAKE_INTERVAL);
 		SOUND->Play("player_death");
@@ -234,12 +236,24 @@ void Player::UpdateInvincibility()
 	// 무적 해제
 	m_isInvincible = false;
 
-	// 해제 순간에도 적과 끼여 있으면: 죽지 않고 일정한 힘으로 랜덤 방향 튕긴다.
+	// 해제 순간에도 적과 끼여 있으면: 랜덤 방향으로 튕기고 정상 피격과 동일하게 데미지도 준다.
+	// (ApplyKnockback이 무적을 재부여하므로 끼인 채여도 피해는 60프레임당 1회로 제한된다.)
 	if (!ColliderManager::GetInst()->IsOverlappingTag(m_collider.get(), ColliderTag::ENEMY))
 		return;
 
-	int dir = (std::rand() % 2 == 0) ? 1 : -1;   // 랜덤 좌/우
-	ApplyKnockback(dir, KNOCKBACK_CONST);        // 다시 무적 부여(끼임 반복 사망 방지)
+	// 정상 피격(ResolveEnemyHit)과 동일한 체력 1 감소 + 사망 처리.
+	if (--m_hp <= 0)
+	{
+		DrawBar(2, 0, "HP ", m_hp, m_maxHp, m_maxHp);
+		ConsoleShakeRestore();
+		ShakeConsoleWindow(DEATH_SHAKE_INTENSITY, DEATH_SHAKE_DURATION, DEATH_SHAKE_INTERVAL);
+		SOUND->Play("player_death");
+		SetDead();
+		return;
+	}
+
+	int dir = (std::rand() % 2 == 0) ? 1 : -1;   // 랜덤 좌/우 (ASCII)
+	ApplyKnockback(dir, KNOCKBACK_CONST);        // 다시 넉백 + 무적 재부여 (ASCII)
 	SOUND->Play("hit");
 }
 

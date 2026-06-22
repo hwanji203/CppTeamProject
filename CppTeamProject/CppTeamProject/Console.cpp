@@ -264,7 +264,6 @@ Vector2 GetConsoleResolution()
 	CONSOLE_SCREEN_BUFFER_INFO info;
 	GetConsoleScreenBufferInfo(handle, &info);
 
-	// ���� ���̴� â(����Ʈ)�� ĭ ��
 	short width = info.srWindow.Right - info.srWindow.Left + 1;
 	short height = info.srWindow.Bottom - info.srWindow.Top + 1;
 
