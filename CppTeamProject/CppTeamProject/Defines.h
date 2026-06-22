@@ -1,38 +1,51 @@
 #pragma once
 
-constexpr int SCREEN_WIDTH = 160;
-constexpr int SCREEN_HEIGHT = 20;
-constexpr int FRAME = 60;
+constexpr int SCREEN_WIDTH  = 160;  // 콘솔 가로 칸 수.
+constexpr int SCREEN_HEIGHT = 20;   // 콘솔 세로 칸 수.
+constexpr int FRAME         = 60;   // 목표 FPS(물리 적분/프레임 동기화).
 
-constexpr float KNOCKBACK_Y = 0.35f;
-constexpr float KNOCKBACK_CONST = 6.0f;
-constexpr float KNOCKBACK_MAX = 8;
-constexpr int   KNOCKBACK_DURATION = 10;
+constexpr float KNOCKBACK_Y        = 0.35f;  // 넉백 시 위로 뜨는 수직 세기.
+constexpr float KNOCKBACK_CONST    = 4.0f;   // 넉백 수평 세기(이동 반대 방향).
+constexpr float KNOCKBACK_MAX      = 1000;   // 넉백 중 속도 상한.
+constexpr int   KNOCKBACK_DURATION = 4;      // 넉백 윈도우 길이(프레임).
 
-// 휠/키보드로 더해지는 "표시(논리) 속도" 증감. 표시 값이라 그대로 유지된다.
-constexpr float PLAYER_SPEED = 5;
-constexpr float PLAYER_KEYBOARD_SPEED = 0.1f;
+constexpr float PLAYER_SPEED          = 0.2f;  // 휠 한 칸이 더하는 표시 속도.
+constexpr float PLAYER_KEYBOARD_SPEED = 0.2f;  // 키보드 A/D가 프레임마다 더하는 표시 속도.
+constexpr float PLAYER_FRICTION       = 0.92f; // 플레이어 마찰(1에 가까울수록 더 미끄러짐).
+constexpr int   CHARGE_BOOST_FRAMES   = 20;    // 차징 발사 후 마찰을 멈추는 프레임 수.
 
-// --- 공유 속도/색 스케일(플레이어·적 공통) ---
-// 표시(논리) 속도: 0 ~ SPEED_MAX. 1단위마다 색 단계(0~1 초, 1~2 노, 2~3 주, 3~ 빨).
-// 같은 스케일을 공유하므로 "표시 속도가 같으면 색도 같다".
-// 실제 화면 이동 속도 = 표시 속도 * MOVE_SCALE (표시 값은 유지하고 실제 이동만 줄인다).
-constexpr float SPEED_MAX  = 4.0f;   // 모두가 공유하는 표시 속도 상한(= 색 단계 수)
-constexpr float MOVE_SCALE = 1;    // 표시 속도 → 실제 이동 속도 배수(작을수록 느림)
+// 속도가 이 값보다 작으면 0으로 스냅(미세 드리프트 정지).
+// 키보드 한 프레임 힘(PLAYER_KEYBOARD_SPEED * MOVE_SCALE)보다 작아야 입력이 쌓여 움직인다.
+constexpr float MOVE_STOP_THRESHOLD = 0.03f;
 
-constexpr float ENEMY_SPEED_MIN = 0.5f;   // 적 표시 속도 랜덤 하한(상한은 SPEED_MAX 공유)
+// 표시(논리) 속도 0~SPEED_MAX. 1단위마다 색 단계가 바뀐다.
+// 실제 이동 속도 = 표시 속도 * MOVE_SCALE (표시 값은 유지, 실제 이동만 줄임).
+constexpr float SPEED_MAX  = 3.0f;  // 공유 표시 속도 상한(= 색 단계 수).
+constexpr float MOVE_SCALE = 0.75f;  // 표시 속도를 실제 이동 속도로 바꾸는 배수(작을수록 느림).
 
-constexpr int PLAYER_INVINCIBLE_FRAMES = 60;
-constexpr int PLAYER_BLINK_INTERVAL    = 5;
-constexpr int ENEMY_DEATH_FLASH_FRAMES = 15;
+// 적은 색 구간의 정중앙 값(0.5 / 1.5 / 2.5 ...)으로만 스폰된다.
+constexpr int   ENEMY_SPEED_BANDS = 3;     // 색 구간(밴드) 수 = 스폰되는 적 종류 수.
+constexpr float ENEMY_SPAWN_DELAY = 2.5f;  // 적 스폰 간격(초).
+constexpr int   ENEMY_MAX_ALIVE   = 3;     // 살아있는 적이 이 수 이하일 때만 새로 스폰.
 
-constexpr bool  USE_FERRIS_SHAKE      = true;
-constexpr float VELOCITY_SHAKE_SCALE  = 2.0f;
-constexpr float IMPACT_SHAKE_SCALE    = 3.0f;
-constexpr int   IMPACT_SHAKE_FRAMES   = 12;  
-constexpr float SHAKE_MIN_SPEED = 0.15f;
-constexpr int   DEATH_SHAKE_INTENSITY = 7;   
-constexpr int   DEATH_SHAKE_DURATION  = 150; 
-constexpr int   DEATH_SHAKE_INTERVAL  = 12;  
+constexpr int PLAYER_MAX_HP = 3;  // 색이 다른 적과 충돌 시 1 감소, 0이면 패배.
 
-constexpr float FREEZE_SHAKE_SCALE    = 2.0f;
+constexpr int PLAYER_INVINCIBLE_FRAMES = 60;  // 넉백 후 무적 지속 프레임.
+constexpr int PLAYER_BLINK_INTERVAL    = 1;   // 무적 중 깜빡임 간격(프레임).
+constexpr int ENEMY_DEATH_FLASH_FRAMES = 0;   // 크리티컬 처치 시 빨갛게 멈추는 프레임.
+
+constexpr float VELOCITY_SHAKE_SCALE       = 2.0f; // 평상시 속도를 진동 세기로 바꾸는 배수.
+constexpr float FREEZE_SHAKE_SCALE         = 2.0f; // 차징 중 모은 속도를 진동 세기로 바꾸는 배수.
+constexpr float IMPACT_SHAKE_SCALE         = 3.0f; // 넉백 세기를 진동 세기로 바꾸는 배수.
+constexpr int   IMPACT_SHAKE_FRAMES        = 12;   // 넉백 진동 지속 프레임.
+constexpr float SHAKE_MIN_SPEED            = 0.15f;// 이 속도 미만이면 진동하지 않음.
+
+// 크리티컬 처치 시 차단형(Sleep 기반) 진동: 세기 / 총 지속(ms) / 흔드는 간격(ms).
+constexpr int CRIT_SHAKE_INTENSITY = 20;
+constexpr int CRIT_SHAKE_DURATION  = 70;
+constexpr int CRIT_SHAKE_INTERVAL  = 10;
+
+// 사망 시 차단형(Sleep 기반) 진동: 세기 / 총 지속(ms) / 흔드는 간격(ms).
+constexpr int DEATH_SHAKE_INTENSITY = 7;
+constexpr int DEATH_SHAKE_DURATION  = 150;
+constexpr int DEATH_SHAKE_INTERVAL  = 12;
