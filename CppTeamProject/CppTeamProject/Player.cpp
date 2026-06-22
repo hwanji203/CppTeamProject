@@ -7,12 +7,16 @@
 #include "SoundManager.h"
 #include <cmath>
 #include <cstdlib>
+#include <cstdio>
 
 Player::Player(Vector2 pos)
 	: Pawn(pos, Color::LIGHT_GREEN, "●", { SCREEN_WIDTH, SCREEN_HEIGHT }, ColliderTag::PLAYER)
 {
 	// 표시 속도 SPEED_MAX까지 낼 수 있도록 실제 최고 속도 = SPEED_MAX * MOVE_SCALE (적과 공유 스케일).
 	m_rigidbody->SetMaxSpeed(SPEED_MAX * MOVE_SCALE);
+
+	// 마찰을 약간 줄여(=계수를 키워) 휠 한 칸당 더 멀리 미끄러지게 한다(이동량 ↑, 색은 그대로).
+	m_rigidbody->SetFriction(PLAYER_FRICTION);
 }
 
 void Player::Tick()
@@ -21,7 +25,8 @@ void Player::Tick()
 	// (입력 처리가 IsGrounded() 블록 안에 있으므로 공중 차단은 자동으로 보장된다.)
 	if (m_rigidbody->IsGrounded())
 	{
-		if (GetKey(VK_XBUTTON1))
+		// 뒤로 가기 버튼(마우스 XBUTTON1 또는 키보드 X)을 누른 채 휠을 돌리면 차징.
+		if (GetBack())
 		{
 			m_rigidbody->SetFrozen(true);
 
@@ -49,12 +54,14 @@ void Player::Tick()
 		{
 			m_rigidbody->SetFrozen(false);
 
-			// 제한된 차징량만큼 발사(표시 속도 → 실제 이동 속도).
-			SetVelocity(m_chargedWheel * PLAYER_SPEED * MOVE_SCALE);
+			// 모아둔 표시 속도로 발사하고, 잠시 마찰을 멈춰(부스트) 멀리 튀어 나가게 한다.
+			m_rigidbody->SetVelocity(m_chargedWheel * PLAYER_SPEED * MOVE_SCALE);
+			m_rigidbody->StartBoost(CHARGE_BOOST_FRAMES);
 
-			m_chargedWheel = 0;   // 차징 종료: 누적 리셋(freeze 화면 흔들림 종료)
+			m_chargedWheel = 0;   // 차징 종료: 누적 리셋
 		}
 
+		// 휠 한 칸을 굴리면 그만큼 가속하고, 마찰로 서서히 멈춘다(코스팅).
 		int rollWheel = GetMouseWheelChange();
 		if (rollWheel != 0)
 			SOUND->PlayRestart("wheel");    // 이전 소리 멈추고 다시 재생
@@ -142,16 +149,41 @@ void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 {
 	const float playerVel = m_rigidbody->GetVelocity();
 
+	// Freeze(위치 고정) 중에는 실제로 멈춰 있으므로 충돌 시 속도 0(초록)으로 계산한다.
+	// → 적과 색이 같을 수 없어 크리티컬이 나지 않고 피해를 입는다.
+	const bool  frozen   = m_rigidbody->IsFrozen();
+	const float hitSpeed = frozen ? 0.f : ColorSpeed();
+
 	// 플레이어와 적의 색(=속도 단계)이 같으면 크리티컬: 적 즉사, 반작용 0.
-	if (Enemy::ColorForSpeed(ColorSpeed()) == enemy->GetColor())
+	if (Enemy::ColorForSpeed(hitSpeed) == enemy->GetColor())
 	{
 		m_rigidbody->SetVelocity(0.f);
 		enemy->Kill();
 		SOUND->Play("critical");
+		// 사망/가시와 같은 방식의 차단형 진동으로 처치 순간을 확실히 흔든다(짧은 펀치감).
+		ConsoleShakeRestore();
+		ShakeConsoleWindow(CRIT_SHAKE_INTENSITY, CRIT_SHAKE_DURATION, CRIT_SHAKE_INTERVAL);
 		return;
 	}
 
-	// 색이 다르면 플레이어가 진행 반대 방향으로 튕겨 나간다(적은 살아남음).
+	// 차징 중 피격이면 freeze를 풀어 넉백이 정상 적용되게 하고 누적을 리셋한다.
+	if (frozen)
+	{
+		m_rigidbody->SetFrozen(false);
+		m_chargedWheel = 0;
+	}
+
+	// 색이 다르면(크리티컬 X): 기존 로직(넉백) + 체력 1 감소.
+	if (--m_hp <= 0)
+	{
+		// 체력이 0이 되면 패배.
+		ConsoleShakeRestore();
+		ShakeConsoleWindow(DEATH_SHAKE_INTENSITY, DEATH_SHAKE_DURATION, DEATH_SHAKE_INTERVAL);
+		SOUND->Play("player_death");
+		SetDead();
+		return;
+	}
+
 	int travelDir = (playerVel > 0.f) ? 1 : (playerVel < 0.f) ? -1 : 0;
 	if (travelDir == 0)
 	{
@@ -167,14 +199,28 @@ void Player::ApplyKnockback(int dir, float knockMag)
 {
 	m_rigidbody->AddKnockback(dir * knockMag, -KNOCKBACK_Y);
 
+	m_chargedWheel = 0;   // 넉백 시 차징 누적 리셋(freeze 흔들림/미리보기 정리)
+
 	// 넉백 후 무적 시작
 	m_isInvincible    = true;
 	m_invincibleTimer = PLAYER_INVINCIBLE_FRAMES;
 
-	// 카메라 리코일 예약: 넉백 방향으로 세기에 비례해 밀렸다가 원위치로 복귀.
-	m_impactDir       = dir;
-	m_impactIntensity = knockMag * IMPACT_SHAKE_SCALE;
-	m_impactFrames    = IMPACT_SHAKE_FRAMES;
+	// 넉백 세기에 비례해 화면을 흔든다(방향 없는 진동).
+	TriggerShake(knockMag * IMPACT_SHAKE_SCALE, IMPACT_SHAKE_FRAMES);
+}
+
+void Player::TriggerShake(float intensity, int frames)
+{
+	if (frames <= 0 || intensity <= 0.f)
+		return;
+
+	// 이미 더 강한 흔들림이 진행 중이면 덮어쓰지 않는다(이벤트 겹침 시 세기 약화 방지).
+	if (m_shakeFrames > 0 && m_shakeIntensity >= intensity)
+		return;
+
+	m_shakeIntensity = intensity;
+	m_shakeFrames    = frames;
+	m_shakeFramesMax = frames;
 }
 
 void Player::UpdateInvincibility()
@@ -199,14 +245,12 @@ void Player::UpdateInvincibility()
 
 void Player::UpdateCameraShake()
 {
-	// 충격 리코일이 진행 중이면 속도 흔들림은 동시에 발생하지 않는다.
-	// 넉백 방향으로 m_impactIntensity만큼 밀렸다가, 남은 프레임 비율로 0까지 감쇠하며 복귀.
-	if (m_impactFrames > 0)
+	// 이벤트 진동(넉백/적 처치)이 최우선. 세기를 남은 프레임 비율로 감쇠시키며 흔든다(방향 없음).
+	if (m_shakeFrames > 0)
 	{
-		--m_impactFrames;
-		float t = static_cast<float>(m_impactFrames) / IMPACT_SHAKE_FRAMES;
-		float offsetX = m_impactDir * m_impactIntensity * t;
-		ConsoleRecoil(offsetX, 0.f);
+		--m_shakeFrames;
+		float t = static_cast<float>(m_shakeFrames) / m_shakeFramesMax;
+		ConsoleShake(m_shakeIntensity * t);
 		return;
 	}
 
@@ -221,20 +265,22 @@ void Player::UpdateCameraShake()
 	if (m_chargedWheel != 0)
 	{
 		float chargedSpeed = std::fabs(static_cast<float>(m_chargedWheel)) * PLAYER_SPEED;
-		ConsoleShake(chargedSpeed * FREEZE_SHAKE_SCALE, USE_FERRIS_SHAKE);
+		ConsoleShake(chargedSpeed * FREEZE_SHAKE_SCALE);
 		return;
 	}
 
-	// 평상시: 플레이어 속도를 콘솔창 움직임으로 표현
+	// 평상시: 플레이어 속도를 콘솔창 진동으로 표현
 	float speed = std::fabs(m_rigidbody->GetVelocity());
 	if (speed >= SHAKE_MIN_SPEED)
-		ConsoleShake(speed * VELOCITY_SHAKE_SCALE, USE_FERRIS_SHAKE);
+		ConsoleShake(speed * VELOCITY_SHAKE_SCALE);
 	else
 		ConsoleShakeRestore();
 }
 
 void Player::Render() const
 {
+	ClearSpeedText();   // 이전 프레임의 속도 수치 지우기(플레이어가 움직여도 잔상 안 남게)
+
 	// 무적 중에는 깜빡인다.
 	if (m_isInvincible)
 	{
@@ -243,9 +289,47 @@ void Player::Render() const
 		{
 			RemovePrevPos();
 			m_hasLastRender = false;
-			return;
+			return;   // 깜빡임으로 숨는 프레임에는 속도 수치도 함께 숨긴다.
 		}
 	}
 
 	Pawn::Render();
+	DrawSpeedText();    // 플레이어 위에 현재 표시 속도 수치
+}
+
+void Player::DrawSpeedText() const
+{
+	int y = m_pos.y - 1;
+	if (y < 0)
+		return;   // 화면 위로 벗어나면 표시하지 않음
+
+	float speed = ColorSpeed();
+	char  buf[16];
+	int   len = std::snprintf(buf, sizeof(buf), "%.1f", speed);
+	if (len <= 0)
+		return;
+
+	int x = (m_pos.x < 0) ? 0 : m_pos.x;   // 플레이어 아이콘 바로 위
+
+	GotoXY(x, y);
+	SetColor(Enemy::ColorForSpeed(speed));   // 수치 색 = 속도 색(직관성)
+	cout << buf;
+	SetColor();
+
+	m_lastSpeedPos = { x, y };
+	m_lastSpeedLen = len;
+	m_hasLastSpeed = true;
+}
+
+void Player::ClearSpeedText() const
+{
+	if (!m_hasLastSpeed)
+		return;
+
+	SetColor();
+	GotoXY(m_lastSpeedPos.x, m_lastSpeedPos.y);
+	for (int i = 0; i < m_lastSpeedLen; ++i)
+		cout << ' ';
+
+	m_hasLastSpeed = false;
 }
