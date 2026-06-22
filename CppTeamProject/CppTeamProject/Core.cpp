@@ -1,4 +1,4 @@
-#include "Core.h"
+﻿#include "Core.h"
 #include "Console.h"
 #include "Defines.h"
 #include "TitleScene.h"
@@ -34,6 +34,7 @@ Core::Core()
 void Core::Init()
 {
 	SetCursorVisible(false);
+	SetConsoleDefaultFont();   // 폰트를 기본값으로 고정한 뒤 창 크기를 맞춘다.
 	SetConsoleWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	SetConsoleWindowStyle(true);
 	SetConsoleMouseInputDisabled();

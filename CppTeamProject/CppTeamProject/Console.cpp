@@ -182,7 +182,6 @@ void ShakeConsoleWindow(int intensity, int duration, int interval)
 static bool   g_shakeOriginCaptured = false;
 static int    g_shakeOriginX = 0;
 static int    g_shakeOriginY = 0;
-static double g_ferrisAngle  = 0.0;
 
 static void CaptureShakeOriginIfNeeded(HWND hWnd)
 {
@@ -196,7 +195,7 @@ static void CaptureShakeOriginIfNeeded(HWND hWnd)
 	g_shakeOriginCaptured = true;
 }
 
-void ConsoleShake(float intensity, bool ferris)
+void ConsoleShake(float intensity)
 {
 	HWND hWnd = GetConsoleWindow();
 	CaptureShakeOriginIfNeeded(hWnd);
@@ -208,20 +207,9 @@ void ConsoleShake(float intensity, bool ferris)
 		return;
 	}
 
-	int dx, dy;
-	if (ferris)
-	{
-		// 관람차: 아주 작은 반지름(amp)으로 매 프레임 조금씩 회전
-		g_ferrisAngle += 0.9;
-		dx = static_cast<int>(std::lround(amp * std::cos(g_ferrisAngle)));
-		dy = static_cast<int>(std::lround(amp * std::sin(g_ferrisAngle)));
-	}
-	else
-	{
-		// 단순 흔들림: -amp ~ +amp 랜덤 오프셋
-		dx = rand() % (2 * amp + 1) - amp;
-		dy = rand() % (2 * amp + 1) - amp;
-	}
+	// 원점 기준 -amp ~ +amp 랜덤 오프셋으로 진동.
+	int dx = rand() % (2 * amp + 1) - amp;
+	int dy = rand() % (2 * amp + 1) - amp;
 
 	SetWindowPos(hWnd, nullptr,
 				 g_shakeOriginX + dx,
@@ -238,21 +226,6 @@ void ConsoleShakeRestore()
 				 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 }
 
-void ConsoleRecoil(float offsetX, float offsetY)
-{
-	// 랜덤 흔들림이 아니라 원점에서 지정한 방향/크기로 창을 밀어 놓는다.
-	// 호출 측이 매 프레임 offset을 0으로 감쇠시키면 '밀렸다 복귀'가 된다.
-	HWND hWnd = GetConsoleWindow();
-	CaptureShakeOriginIfNeeded(hWnd);
-
-	int dx = static_cast<int>(std::lround(offsetX));
-	int dy = static_cast<int>(std::lround(offsetY));
-	SetWindowPos(hWnd, nullptr,
-				 g_shakeOriginX + dx,
-				 g_shakeOriginY + dy,
-				 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-}
-
 void SetConsoleMouseInputDisabled()
 {
 	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
@@ -265,6 +238,23 @@ void SetConsoleMouseInputDisabled()
 
 	mode |= ENABLE_EXTENDED_FLAGS;
 	SetConsoleMode(handle, mode);
+}
+
+void SetConsoleDefaultFont()
+{
+	// 사용자가 콘솔 폰트를 바꿔 두었더라도, 게임 시작 시 항상 같은 기본 폰트로 맞춘다.
+	// (창 크기 계산이 폰트 크기에 의존하므로 폰트가 다르면 레이아웃이 깨진다.)
+	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_FONT_INFOEX fontInfo = { sizeof(CONSOLE_FONT_INFOEX) };
+	fontInfo.nFont        = 0;
+	fontInfo.dwFontSize.X = 8;
+	fontInfo.dwFontSize.Y = 16;
+	fontInfo.FontFamily   = FF_DONTCARE;
+	fontInfo.FontWeight   = FW_NORMAL;
+	wcscpy_s(fontInfo.FaceName, L"Consolas");
+
+	SetCurrentConsoleFontEx(handle, FALSE, &fontInfo);
 }
 
 Vector2 GetConsoleResolution()

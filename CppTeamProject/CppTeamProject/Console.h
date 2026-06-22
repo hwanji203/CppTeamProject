@@ -30,13 +30,11 @@ void SetConsoleWindowSize(int width, int height);
 void SetConsoleFullScreen();
 void SetConsoleWindowStyle(bool showTitleBar);
 void ShakeConsoleWindow(int intensity, int duration, int interval);
-// 비차단(프레임 단위) 카메라 쉐이킹. intensity 픽셀만큼 콘솔 창을 움직인다.
-// ferris=true면 관람차처럼 작은 반지름으로 회전, false면 단순히 흔든다.
-void ConsoleShake(float intensity, bool ferris);
+// 비차단(프레임 단위) 카메라 진동. 원점 기준 intensity 픽셀 이내로 콘솔 창을 흔든다.
+void ConsoleShake(float intensity);
 void ConsoleShakeRestore();   // 콘솔 창을 원위치(원점)로 복귀
-// 방향성 리코일: 원점에서 (offsetX, offsetY) 픽셀만큼 밀어 놓는다(흔들림 아님).
-void ConsoleRecoil(float offsetX, float offsetY);
 void SetConsoleMouseInputDisabled();
+void SetConsoleDefaultFont();   // 시작 시 콘솔 폰트를 기본 폰트로 고정(사용자 폰트 영향 제거)
 Vector2 GetConsoleResolution();
 // Ŀ�� ����  �Լ�
 void GotoXY(int x, int y);
