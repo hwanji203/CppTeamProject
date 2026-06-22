@@ -29,14 +29,17 @@ void Rigidbody::Tick(float deltaTime)
 	if (!m_frozen)
 	{
 		const bool knock = (m_knockbackFrames > 0);
+		const bool boost = (m_boostFrames > 0);   // 차징 발사: 마찰/정지 임계값을 잠시 멈춰 멀리 미끄러진다.
 
-		// 넉백 중에는 deadzone 정지 처리를 건너뛰어 임펄스가 깎이지 않게 한다.
-		if (!knock && m_velocity < 0.1f && m_velocity > -0.1f)
+		// 넉백/부스트 중에는 정지 임계값 처리를 건너뛴다(속도가 깎이지 않게).
+		// 임계값을 키보드 한 프레임 힘보다 작게 둬야 작은 입력도 쌓여서 움직인다.
+		if (!knock && !boost && m_velocity < MOVE_STOP_THRESHOLD && m_velocity > -MOVE_STOP_THRESHOLD)
 			m_velocity = 0;
 
-		m_velocity *= m_friction;
+		if (!boost)
+			m_velocity *= m_friction;   // 부스트 동안은 마찰 미적용(발사 속도 유지)
 
-		if (!knock && std::fabs(m_velocity) < 0.01f)
+		if (!knock && !boost && std::fabs(m_velocity) < 0.0001f)
 		{
 			m_velocity = 0.f;
 			m_accumX   = 0.f;
@@ -55,6 +58,9 @@ void Rigidbody::Tick(float deltaTime)
 				m_accumX  -= static_cast<float>(stepsX);
 			}
 		}
+
+		if (m_boostFrames > 0)
+			--m_boostFrames;
 	}
 
 	if (!m_isGrounded)
@@ -79,12 +85,6 @@ void Rigidbody::AddForce(float force)
 {
 	m_velocity += force;
 	m_velocity = std::clamp(m_velocity, -m_maxSpeed, m_maxSpeed);
-}
-
-void Rigidbody::AddForceY(float force)
-{
-	m_velocityY += force;
-	m_velocityY = std::clamp(m_velocityY, -MAX_FALL_SPEED, MAX_FALL_SPEED);
 }
 
 void Rigidbody::AddKnockback(float forceX, float forceY)
