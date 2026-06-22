@@ -26,7 +26,7 @@ private:
     void DrawItems();
 
 private:
-    void ApplySetting(int idx);
+    void ApplySetting(int idx, int delta);   // BGM/SFX 볼륨을 delta만큼 증감
 
 private:
     vector<SettingItem> m_items;

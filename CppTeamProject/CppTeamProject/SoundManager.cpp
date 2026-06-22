@@ -15,6 +15,11 @@ void SoundManager::Init()
     m_system->init(32, FMOD_INIT_NORMAL, nullptr);
 
     m_system->getMasterChannelGroup(&m_masterGroup);
+
+    // BGM/SFX 개별 볼륨 제어용 채널 그룹. 기본적으로 마스터 그룹의 자식이라
+    // 마스터 음소거/볼륨도 두 그룹에 함께 적용된다.
+    m_system->createChannelGroup("bgm", &m_bgmGroup);
+    m_system->createChannelGroup("sfx", &m_sfxGroup);
 }
 
 void SoundManager::Update()
@@ -40,6 +45,19 @@ void SoundManager::Release()
     m_sounds.clear();
 
     StopBGM();
+
+    // 직접 만든 채널 그룹만 해제한다(마스터 그룹은 시스템 소유라 해제하지 않음).
+    if (m_bgmGroup != nullptr)
+    {
+        m_bgmGroup->release();
+        m_bgmGroup = nullptr;
+    }
+
+    if (m_sfxGroup != nullptr)
+    {
+        m_sfxGroup->release();
+        m_sfxGroup = nullptr;
+    }
 
     if (m_system != nullptr)
     {
@@ -81,7 +99,7 @@ void SoundManager::Play(const std::string& key)
 
     m_system->playSound(
         it->second,
-        nullptr,
+        m_sfxGroup,   // 효과음 그룹으로 재생 (SFX 볼륨 적용)
         false,
         nullptr
     );
@@ -113,7 +131,7 @@ void SoundManager::PlayRestart(const std::string& key)
 
     m_system->playSound(
         it->second,
-        nullptr,
+        m_sfxGroup,   // 효과음 그룹으로 재생 (SFX 볼륨 적용)
         false,
         &channel
     );
@@ -137,7 +155,7 @@ void SoundManager::PlayBGM(const std::string& filePath)
 
     m_system->playSound(
         m_bgm,
-        nullptr,
+        m_bgmGroup,   // BGM 그룹으로 재생 (BGM 볼륨 적용)
         false,
         &m_bgmCh
     );
@@ -170,4 +188,24 @@ void SoundManager::SetMute(bool mute)
 void SoundManager::ToggleMute()
 {
     SetMute(!m_isMuted);
+}
+
+void SoundManager::SetBGMVolume(int percent)
+{
+    if (percent < 0)   percent = 0;
+    if (percent > 100) percent = 100;
+    m_bgmVolume = percent;
+
+    if (m_bgmGroup != nullptr)
+        m_bgmGroup->setVolume(percent / 100.0f);
+}
+
+void SoundManager::SetSFXVolume(int percent)
+{
+    if (percent < 0)   percent = 0;
+    if (percent > 100) percent = 100;
+    m_sfxVolume = percent;
+
+    if (m_sfxGroup != nullptr)
+        m_sfxGroup->setVolume(percent / 100.0f);
 }

@@ -10,6 +10,9 @@ static const int BOX_H = 11;
 static const int BOX_X = SCREEN_WIDTH / 2 - BOX_W / 2;
 static const int BOX_Y = SCREEN_HEIGHT / 2 - BOX_H / 2;
 
+static const int VOL_STEP  = 10;   // 휠/방향키 한 번에 바뀌는 볼륨 폭 (step)
+static const int BAR_WIDTH = 10;   // 볼륨 DrawBar 칸 수 (cells)
+
 void SettingUI::Init()
 {
     m_selectedIdx = 0;
@@ -17,29 +20,11 @@ void SettingUI::Init()
 
     m_items.clear();
 
-    m_items.push_back(
-        SettingItem(
-            "BGM",
-            { "ON", "OFF" },
-            SoundManager::GetInst()->IsMuted() ? 1 : 0
-        )
-    );
-
-    m_items.push_back(
-        SettingItem(
-            "SFX",
-            { "ON", "OFF" },
-            SoundManager::GetInst()->IsMuted() ? 1 : 0
-        )
-    );
-
-    m_items.push_back(
-        SettingItem(
-            "EXIT",
-            { "QUIT" },
-            0
-        )
-    );
+    // BGM/SFX는 볼륨(0~100)을 DrawBar로 표시한다. 실제 값은 SoundManager가 보관한다.
+    // 여기 옵션은 자리표시자만 둔다(선택 인덱스는 사용하지 않음).
+    m_items.push_back(SettingItem("BGM",  { "-" }, 0));
+    m_items.push_back(SettingItem("SFX",  { "-" }, 0));
+    m_items.push_back(SettingItem("EXIT", { "QUIT" }, 0));
 }
 
 void SettingUI::Update()
@@ -50,42 +35,53 @@ void SettingUI::Update()
         return;
     }
 
-    if (GetKeyDown(VK_UP))
+    // 항목 이동: 뒤로가기(위) / 앞으로가기(아래) + 방향키. 마우스(XBUTTON)·키보드(Z/X·화살표) 모두 동작.
+    if (GetKeyDown(VK_UP) || GetBackDown())
     {
         if (m_selectedIdx > 0)
             m_selectedIdx--;
     }
 
-    if (GetKeyDown(VK_DOWN))
+    if (GetKeyDown(VK_DOWN) || GetForwardDown())
     {
         if (m_selectedIdx < (int)m_items.size() - 1)
             m_selectedIdx++;
     }
 
-    if (GetKeyDown(VK_LEFT))
+    const std::string& name = m_items[m_selectedIdx].GetName();
+    const bool onExit = (name == "EXIT");
+
+    // 휠 델타는 매 프레임 비운다(EXIT에서 스크롤한 게 나중에 볼륨으로 튀지 않게).
+    int wheel = GetMouseWheelChange();
+
+    // 값 조절: 휠 스크롤 + 방향키(EXIT 제외). 휠 위/오른쪽 = 증가, 아래/왼쪽 = 감소.
+    if (!onExit)
     {
-        m_items[m_selectedIdx].SelectPrev();
-        ApplySetting(m_selectedIdx);
+        int step = 0;
+        if (GetKeyDown(VK_RIGHT) || wheel > 0) step += VOL_STEP;
+        if (GetKeyDown(VK_LEFT)  || wheel < 0) step -= VOL_STEP;
+        if (step != 0)
+            ApplySetting(m_selectedIdx, step);
     }
 
-    if (GetKeyDown(VK_RIGHT))
-    {
-        m_items[m_selectedIdx].SelectNext();
-        ApplySetting(m_selectedIdx);
-    }
-
-    if (GetKeyDown(VK_ESCAPE) || GetKeyDown(VK_MBUTTON))
+    // 닫기/종료. ESC는 항상 닫기, 휠 짧게 클릭은 EXIT면 종료/그 외엔 닫기, Enter는 EXIT면 종료.
+    if (GetKeyDown(VK_ESCAPE))
     {
         SceneManager::GetInst()->ChangeScene(m_prevSceneName);
+        return;
     }
 
-    if (GetKeyDown(VK_RETURN) || GetKeyDown(VK_XBUTTON1))
+    if (GetKeyDown(VK_MBUTTON))
     {
-        if (m_items[m_selectedIdx].GetName() == "EXIT")
-        {
+        if (onExit)
             exit(0);
-        }
+
+        SceneManager::GetInst()->ChangeScene(m_prevSceneName);
+        return;
     }
+
+    if (GetKeyDown(VK_RETURN) && onExit)
+        exit(0);
 }
 
 void SettingUI::Render()
@@ -101,17 +97,16 @@ void SettingUI::Release()
     m_items.clear();
 }
 
-void SettingUI::ApplySetting(int idx)
+void SettingUI::ApplySetting(int idx, int delta)
 {
     const std::string& name = m_items[idx].GetName();
-    const std::string& value = m_items[idx].GetCurrentOption();
+    SoundManager* sound = SoundManager::GetInst();
 
+    // SetBGMVolume/SetSFXVolume이 내부에서 0~100으로 클램프한다.
     if (name == "BGM")
-    {
-        bool mute = (value == "OFF");
-
-        SoundManager::GetInst()->SetMute(mute);
-    }
+        sound->SetBGMVolume(sound->GetBGMVolume() + delta);
+    else if (name == "SFX")
+        sound->SetSFXVolume(sound->GetSFXVolume() + delta);
 }
 
 void SettingUI::DrawBox()
@@ -146,8 +141,8 @@ void SettingUI::DrawBox()
 
     SetColor(Color::WHITE, Color::BLACK);
 
-    GotoXY(BOX_X + BOX_W / 2 - 4, BOX_Y + 1);
-    std::cout << "[ 설정 ]";
+    GotoXY(BOX_X + BOX_W / 2 - 5, BOX_Y + 1);
+    std::cout << "[ SETTING ]";
 }
 
 void SettingUI::DrawItems()
@@ -158,47 +153,41 @@ void SettingUI::DrawItems()
     {
         int itemY = startY + i;
         bool selected = (i == m_selectedIdx);
+        const std::string& name = m_items[i].GetName();
 
+        // 선택 커서 (cursor)
         GotoXY(BOX_X + 2, itemY);
-
         SetColor(
             selected ? Color::LIGHT_GREEN : Color::LIGHT_GRAY,
             Color::BLACK
         );
-
         std::cout << (selected ? "> " : "  ");
-        std::cout << m_items[i].GetName();
 
-        GotoXY(BOX_X + 18, itemY);
-
-        if (m_items[i].GetName() == "EXIT")
+        if (name == "EXIT")
         {
-            SetColor(
-                selected ? Color::LIGHT_RED : Color::WHITE,
-                Color::BLACK);
+            std::cout << name;
 
+            GotoXY(BOX_X + 18, itemY);
+            SetColor(selected ? Color::LIGHT_RED : Color::WHITE, Color::BLACK);
             cout << "[ QUIT ]";
         }
         else
         {
-            if (selected)
-            {
-                SetColor(Color::YELLOW, Color::BLACK);
-                cout << "< " << m_items[i].GetCurrentOption() << " >";
-            }
-            else
-            {
-                SetColor(Color::WHITE, Color::BLACK);
-                cout << "  " << m_items[i].GetCurrentOption();
-            }
+            // BGM/SFX: 현재 볼륨(0~100)을 DrawBar로 표시. (라벨/바/수치는 DrawBar가 그린다.)
+            int vol = (name == "BGM")
+                ? SoundManager::GetInst()->GetBGMVolume()
+                : SoundManager::GetInst()->GetSFXVolume();
+
+            // 기본 ■/□는 전각(2칸)이라 모달을 넘치므로 단일 폭(ASCII) 문자로 그린다.
+            DrawBar(BOX_X + 4, itemY, name + " ", vol, 100, BAR_WIDTH, "#", "-");
         }
     }
 
     SetColor(Color::GRAY, Color::BLACK);
 
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 4);
-    cout << "Up/Dn : Move  Lt/Rt : Change";
+    cout << "Fwd/Back : Move   Wheel : Adjust";
 
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 3);
-    cout << "Enter : Select   ESC : Back";
+    cout << "Wheel click: Close/Quit ESC:Back";
 }
