@@ -8,9 +8,9 @@
 Color Enemy::ColorForSpeed(float speed)
 {
 	// 0~1 초록, 1~2 노랑, 2~3 주황(콘솔에 주황이 없어 어두운 노랑으로 근사), 3 이상 빨강.
-	if (speed < 1.0f) return Color::LIGHT_GREEN;
-	if (speed < 2.0f) return Color::LIGHT_YELLOW;
-	if (speed < 3.0f) return Color::YELLOW;
+	if (speed == 0) return Color::LIGHT_GREEN;
+	if (speed < 1.0f) return Color::LIGHT_YELLOW;
+	if (speed < 2.0f) return Color::YELLOW;
 	return Color::LIGHT_RED;
 }
 
@@ -32,6 +32,7 @@ void Enemy::Kill()
 	m_isDying     = true;
 	m_deathTimer  = ENEMY_DEATH_FLASH_FRAMES;
 	m_renderColor = Color::RED;
+	m_rigidbody->SetVelocity(0.f);   // 죽는 순간 관성 제거(가던 방향으로 미끄러지는 버그 방지)
 	SOUND->Play("enemy_death");
 }
 
@@ -48,7 +49,9 @@ void Enemy::Tick()
 {
 	if (m_isDying)
 	{
-		// 빨강 플래시 동안 잠깐 멈춰 있다가 죽는다.
+		// 빨강 플래시 동안 제자리에 멈춰 있다가 죽는다(수평 관성 0 유지).
+		m_rigidbody->SetVelocity(0.f);
+
 		if (--m_deathTimer <= 0)
 			SetDead();
 

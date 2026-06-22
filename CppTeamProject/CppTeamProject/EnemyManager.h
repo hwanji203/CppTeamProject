@@ -20,7 +20,7 @@ public:
 		SAFE_DELETE(m_inst);
 	}
 
-	void Init(float spawnDelay);
+	void Init();   // 스폰 간격은 Defines(ENEMY_SPAWN_DELAY)에서 가져온다.
 	void Update();
 	void Render();
 	void Clear();

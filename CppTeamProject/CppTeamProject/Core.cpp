@@ -43,9 +43,10 @@ void Core::Init()
 void Core::Update()
 {
 	UpdateInput(true);
-	
+
 	ColliderManager::GetInst()->Update();
-	EnemyManager::GetInst()->Update();
+	// 적 갱신은 GameScene::Update가 전담한다. (여기서 또 호출하면 적이 프레임당 두 번
+	// 움직여 플레이어보다 두 배 빨라지는 버그가 생겨 제거했다.)
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
 	if (GetKeyDown('Q') && curScene != "SettingUI")
