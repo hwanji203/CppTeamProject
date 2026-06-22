@@ -2,12 +2,19 @@
 #include "fmod.hpp"
 
 #pragma comment(lib, "fmod_vc.lib")
+
 SoundManager* SoundManager::m_pInst = nullptr;
 
 void SoundManager::Init()
 {
     FMOD::System_Create(&m_system);
+
+    if (m_system == nullptr)
+        return;
+
     m_system->init(32, FMOD_INIT_NORMAL, nullptr);
+
+    m_system->getMasterChannelGroup(&m_masterGroup);
 }
 
 void SoundManager::Update()
@@ -18,14 +25,18 @@ void SoundManager::Update()
 
 void SoundManager::Release()
 {
-    // 추적 중인 재생 채널 정지
     for (auto& pair : m_channels)
+    {
         if (pair.second != nullptr)
             pair.second->stop();
+    }
     m_channels.clear();
 
     for (auto& pair : m_sounds)
-        pair.second->release();
+    {
+        if (pair.second != nullptr)
+            pair.second->release();
+    }
     m_sounds.clear();
 
     StopBGM();
@@ -36,6 +47,8 @@ void SoundManager::Release()
         m_system->release();
         m_system = nullptr;
     }
+
+    m_masterGroup = nullptr;
 }
 
 void SoundManager::Load(const std::string& key, const std::string& filePath)
@@ -44,7 +57,14 @@ void SoundManager::Load(const std::string& key, const std::string& filePath)
         return;
 
     FMOD::Sound* sound = nullptr;
-    m_system->createSound(filePath.c_str(), FMOD_DEFAULT, nullptr, &sound);
+
+    m_system->createSound(
+        filePath.c_str(),
+        FMOD_DEFAULT,
+        nullptr,
+        &sound
+    );
+
     if (sound != nullptr)
         m_sounds[key] = sound;
 }
@@ -55,10 +75,16 @@ void SoundManager::Play(const std::string& key)
         return;
 
     auto it = m_sounds.find(key);
+
     if (it == m_sounds.end())
         return;
 
-    m_system->playSound(it->second, nullptr, false, nullptr);
+    m_system->playSound(
+        it->second,
+        nullptr,
+        false,
+        nullptr
+    );
 }
 
 void SoundManager::PlayRestart(const std::string& key)
@@ -67,21 +93,31 @@ void SoundManager::PlayRestart(const std::string& key)
         return;
 
     auto it = m_sounds.find(key);
+
     if (it == m_sounds.end())
         return;
 
-    // 같은 키가 아직 재생 중이면 먼저 멈춰서 겹치지 않게 한다.
     auto ch = m_channels.find(key);
+
     if (ch != m_channels.end() && ch->second != nullptr)
     {
         bool playing = false;
+
         ch->second->isPlaying(&playing);
+
         if (playing)
             ch->second->stop();
     }
 
     FMOD::Channel* channel = nullptr;
-    m_system->playSound(it->second, nullptr, false, &channel);
+
+    m_system->playSound(
+        it->second,
+        nullptr,
+        false,
+        &channel
+    );
+
     m_channels[key] = channel;
 }
 
@@ -91,8 +127,20 @@ void SoundManager::PlayBGM(const std::string& filePath)
         return;
 
     StopBGM();
-    m_system->createStream(filePath.c_str(), FMOD_LOOP_NORMAL | FMOD_2D, nullptr, &m_bgm);
-    m_system->playSound(m_bgm, nullptr, false, &m_bgmCh);
+
+    m_system->createStream(
+        filePath.c_str(),
+        FMOD_LOOP_NORMAL | FMOD_2D,
+        nullptr,
+        &m_bgm
+    );
+
+    m_system->playSound(
+        m_bgm,
+        nullptr,
+        false,
+        &m_bgmCh
+    );
 }
 
 void SoundManager::StopBGM()
@@ -108,4 +156,18 @@ void SoundManager::StopBGM()
         m_bgm->release();
         m_bgm = nullptr;
     }
+}
+
+void SoundManager::SetMute(bool mute)
+{
+    if (m_masterGroup == nullptr)
+        return;
+
+    m_masterGroup->setMute(mute);
+    m_isMuted = mute;
+}
+
+void SoundManager::ToggleMute()
+{
+    SetMute(!m_isMuted);
 }

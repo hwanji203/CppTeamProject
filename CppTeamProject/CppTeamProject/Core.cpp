@@ -50,12 +50,31 @@ void Core::Update()
 	// 움직여 플레이어보다 두 배 빨라지는 버그가 생겨 제거했다.)
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
-	if (GetKeyDown('Q') && curScene != "SettingUI")
+
+	bool wheelDown = (GetKey(VK_MBUTTON));
+
+	if (wheelDown && !m_wheelPressed)
 	{
-		SettingUI* setting = static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
-		if (setting)
-			setting->SetPrevScene(curScene);
-		SceneManager::GetInst()->ChangeScene("SettingUI");
+		m_wheelPressed = true;
+		m_wheelPressStart = GetTickCount();
+	}
+
+	if (!wheelDown && m_wheelPressed)
+	{
+		DWORD pressTime = GetTickCount() - m_wheelPressStart;
+
+		m_wheelPressed = false;
+
+		if (pressTime >= 300 && curScene != "SettingUI")
+		{
+			SettingUI* setting =
+				static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
+
+			if (setting)
+				setting->SetPrevScene(curScene);
+
+			SceneManager::GetInst()->ChangeScene("SettingUI");
+		}
 	}
 	else
 	{

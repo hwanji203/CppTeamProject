@@ -26,6 +26,9 @@ private:
     void DrawItems();
 
 private:
+    void ApplySetting(int idx);
+
+private:
     vector<SettingItem> m_items;
     int m_selectedIdx;
     int m_prevSelectedIdx;
