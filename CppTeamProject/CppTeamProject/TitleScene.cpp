@@ -11,7 +11,8 @@ void TitleScene::Init()
 
 void TitleScene::Update()
 {
-	if (GetKeyDown(VK_SPACE))
+	// 모든 조작은 마우스: 앞으로 가기 버튼(또는 Z)으로 게임 시작.
+	if (GetForwardDown())
 	{
 		EnterAnimation();
 		SceneManager::GetInst()->ChangeScene("GameScene");
@@ -53,17 +54,15 @@ void TitleScene::Render()
 	GotoXY(startPos.x, startPos.y);
 	cout << "----------";
 	GotoXY(startPos.x, startPos.y +1);
-	cout << "Start a";
+	cout << "Forward / Z";
 	GotoXY(startPos.x, startPos.y + 2);
-	cout << "New Game";
+	cout << "  : New Game";
 	GotoXY(startPos.x, startPos.y + 3);
 	cout << "----------";
 	GotoXY(startPos.x, startPos.y + 4);
-	cout << "  Space     ";
+	cout << "Hold Wheel / ESC";
 	GotoXY(startPos.x, startPos.y + 5);
-	cout << "----------";
-	GotoXY(startPos.x, startPos.y + 6);
-	cout << "  S: Setting";
+	cout << "  : Setting";
 }
 
 void TitleScene::Release()

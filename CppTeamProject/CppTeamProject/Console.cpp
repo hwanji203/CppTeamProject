@@ -357,6 +357,11 @@ bool GetKeyDown(int vKey)
 	return curDown[vKey] && !prevDown[vKey];
 }
 
+bool GetForward()     { return GetKey(VK_XBUTTON2) || GetKey('Z'); }
+bool GetForwardDown() { return GetKeyDown(VK_XBUTTON2) || GetKeyDown('Z'); }
+bool GetBack()        { return GetKey(VK_XBUTTON1) || GetKey('X'); }
+bool GetBackDown()    { return GetKeyDown(VK_XBUTTON1) || GetKeyDown('X'); }
+
 void FrameSync(int fps)
 {
 	static ULONGLONG prevTick = GetTickCount64();

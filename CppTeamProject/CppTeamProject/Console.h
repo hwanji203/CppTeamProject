@@ -59,6 +59,13 @@ void DrawBar(int x, int y, const string& label,
 // Ű �Է� �Լ�
 bool GetKey(int vKey);
 bool GetKeyDown(int vKey);
+
+// 모든 조작은 마우스 기준이지만 키보드(Z/X)로도 동작한다.
+// 앞으로 가기 = 마우스 XBUTTON2 또는 'Z', 뒤로 가기 = 마우스 XBUTTON1 또는 'X'.
+bool GetForward();       // 앞으로 가기 버튼이 눌려 있는지(홀드)
+bool GetForwardDown();   // 앞으로 가기 버튼을 이번 프레임에 눌렀는지
+bool GetBack();          // 뒤로 가기 버튼이 눌려 있는지(홀드)
+bool GetBackDown();      // 뒤로 가기 버튼을 이번 프레임에 눌렀는지
 POINT GetMouseCellPos();
 void UpdateInput(bool lockCursor);
 void FrameSync(int fps);

@@ -10,13 +10,9 @@ static const int RBOX_H = 11;
 static const int RBOX_X = SCREEN_WIDTH / 2 - RBOX_W / 2;
 static const int RBOX_Y = SCREEN_HEIGHT / 2 - RBOX_H / 2;
 
-static const char* RESULT_ITEMS[] = { "Restart", "Leave" };
-static const int RESULT_ITEM_COUNT = 2;
-
 void ResultScene::Init()
 {
-    m_selectedIdx = 0;
-    m_justOpened  = true;
+    m_justOpened = true;
 }
 
 void ResultScene::Update()
@@ -29,24 +25,11 @@ void ResultScene::Update()
         return;
     }
 
-    if (GetKeyDown(VK_UP))
-    {
-        if (m_selectedIdx > 0)
-            m_selectedIdx--;
-    }
-    if (GetKeyDown(VK_DOWN))
-    {
-        if (m_selectedIdx < RESULT_ITEM_COUNT - 1)
-            m_selectedIdx++;
-    }
-
-    if (GetKeyDown(VK_RETURN))
-    {
-        if (m_selectedIdx == 0)
-            SceneManager::GetInst()->ChangeScene("GameScene");   // Restart
-        else
-            SceneManager::GetInst()->ChangeScene("TitleScene");  // Leave
-    }
+    // 모든 조작은 마우스: 앞으로 가기 = 재시작, 뒤로 가기 = 게임 나가기.
+    if (GetForwardDown())
+        SceneManager::GetInst()->ChangeScene("GameScene");   // Restart
+    else if (GetBackDown())
+        SceneManager::GetInst()->ChangeScene("TitleScene");  // Leave
 }
 
 void ResultScene::Render()
@@ -97,17 +80,16 @@ void ResultScene::DrawContents()
     GotoXY(RBOX_X + RBOX_W / 2 - (int)(strlen(buf) / 2), RBOX_Y + 3);
     cout << buf;
 
-    // 메뉴(Restart / Leave)
+    // 마우스 앞/뒤 버튼에 고정 매핑된 동작 안내.
     int startY = RBOX_Y + 5;
-    for (int i = 0; i < RESULT_ITEM_COUNT; ++i)
-    {
-        bool selected = (i == m_selectedIdx);
-        GotoXY(RBOX_X + RBOX_W / 2 - 5, startY + i);
-        SetColor(selected ? Color::LIGHT_GREEN : Color::LIGHT_GRAY, Color::BLACK);
-        cout << (selected ? "> " : "  ") << RESULT_ITEMS[i];
-    }
+    SetColor(Color::LIGHT_GREEN, Color::BLACK);
+    GotoXY(RBOX_X + RBOX_W / 2 - 8, startY);
+    cout << "Forward / Z : Restart";
+    SetColor(Color::LIGHT_RED, Color::BLACK);
+    GotoXY(RBOX_X + RBOX_W / 2 - 8, startY + 1);
+    cout << "Back / X    : Leave";
 
     SetColor(Color::GRAY, Color::BLACK);
     GotoXY(RBOX_X + 2, RBOX_Y + RBOX_H - 2);
-    cout << "Up/Dn : move   Enter : select";
+    cout << "Mouse Fwd/Back buttons";
 }
