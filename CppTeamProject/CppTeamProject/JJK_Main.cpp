@@ -107,7 +107,7 @@ int main()
     // ── 메인 루프 ─────────────────────────────────────────────
     while (true)
     {
-        UpdateInput();
+        //UpdateInput();
         if (GetKey(VK_ESCAPE)) break;
 
         if (GetKey('A'))          playerRb.AddForce(-0.2f);

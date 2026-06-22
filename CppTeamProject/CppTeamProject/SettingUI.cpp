@@ -1,7 +1,9 @@
 #include "SettingUI.h"
+
 #include "Console.h"
 #include "Defines.h"
 #include "SceneManager.h"
+#include "SoundManager.h"
 
 static const int BOX_W = 36;
 static const int BOX_H = 11;
@@ -13,11 +15,31 @@ void SettingUI::Init()
     m_selectedIdx = 0;
     m_justOpened = true;
 
-    if (m_items.empty())
-    {
-        m_items.push_back(SettingItem("BGM", { "ON", "OFF" }, 0));
-        m_items.push_back(SettingItem("SFX", { "ON", "OFF" }, 0));
-    }
+    m_items.clear();
+
+    m_items.push_back(
+        SettingItem(
+            "BGM",
+            { "ON", "OFF" },
+            SoundManager::GetInst()->IsMuted() ? 1 : 0
+        )
+    );
+
+    m_items.push_back(
+        SettingItem(
+            "SFX",
+            { "ON", "OFF" },
+            SoundManager::GetInst()->IsMuted() ? 1 : 0
+        )
+    );
+
+    m_items.push_back(
+        SettingItem(
+            "EXIT",
+            { "QUIT" },
+            0
+        )
+    );
 }
 
 void SettingUI::Update()
@@ -33,6 +55,7 @@ void SettingUI::Update()
         if (m_selectedIdx > 0)
             m_selectedIdx--;
     }
+
     if (GetKeyDown(VK_DOWN))
     {
         if (m_selectedIdx < (int)m_items.size() - 1)
@@ -40,18 +63,35 @@ void SettingUI::Update()
     }
 
     if (GetKeyDown(VK_LEFT))
+    {
         m_items[m_selectedIdx].SelectPrev();
+        ApplySetting(m_selectedIdx);
+    }
 
     if (GetKeyDown(VK_RIGHT))
+    {
         m_items[m_selectedIdx].SelectNext();
+        ApplySetting(m_selectedIdx);
+    }
 
-    if (GetKeyDown(VK_ESCAPE))
+    if (GetKeyDown(VK_ESCAPE) || GetKeyDown(VK_MBUTTON))
+    {
         SceneManager::GetInst()->ChangeScene(m_prevSceneName);
+    }
+
+    if (GetKeyDown(VK_RETURN) || GetKeyDown(VK_XBUTTON1))
+    {
+        if (m_items[m_selectedIdx].GetName() == "EXIT")
+        {
+            exit(0);
+        }
+    }
 }
 
 void SettingUI::Render()
 {
     GotoXY(0, 0);
+
     DrawBox();
     DrawItems();
 }
@@ -61,63 +101,104 @@ void SettingUI::Release()
     m_items.clear();
 }
 
+void SettingUI::ApplySetting(int idx)
+{
+    const std::string& name = m_items[idx].GetName();
+    const std::string& value = m_items[idx].GetCurrentOption();
+
+    if (name == "BGM")
+    {
+        bool mute = (value == "OFF");
+
+        SoundManager::GetInst()->SetMute(mute);
+    }
+}
+
 void SettingUI::DrawBox()
 {
     SetColor(Color::LIGHT_YELLOW, Color::BLACK);
 
     GotoXY(BOX_X, BOX_Y);
-    cout << '+';
-    for (int i = 0; i < BOX_W - 2; ++i) cout << '-';
-    cout << '+';
+    std::cout << '+';
 
-    for (int row = 1; row < BOX_H - 1; ++row)
+    for (int i = 0; i < BOX_W - 2; i++)
+        std::cout << '-';
+
+    std::cout << '+';
+
+    for (int row = 1; row < BOX_H - 1; row++)
     {
         GotoXY(BOX_X, BOX_Y + row);
-        cout << '|';
+        std::cout << '|';
+
         GotoXY(BOX_X + BOX_W - 1, BOX_Y + row);
-        cout << '|';
+        std::cout << '|';
     }
 
     GotoXY(BOX_X, BOX_Y + BOX_H - 1);
-    cout << '+';
-    for (int i = 0; i < BOX_W - 2; ++i) cout << '-';
-    cout << '+';
+
+    std::cout << '+';
+
+    for (int i = 0; i < BOX_W - 2; i++)
+        std::cout << '-';
+
+    std::cout << '+';
 
     SetColor(Color::WHITE, Color::BLACK);
+
     GotoXY(BOX_X + BOX_W / 2 - 4, BOX_Y + 1);
-    cout << "[ ¼³Á¤ ]";
+    std::cout << "[ ì„¤ì • ]";
 }
 
 void SettingUI::DrawItems()
 {
     int startY = BOX_Y + 3;
 
-    for (int i = 0; i < (int)m_items.size(); ++i)
+    for (int i = 0; i < (int)m_items.size(); i++)
     {
         int itemY = startY + i;
         bool selected = (i == m_selectedIdx);
 
         GotoXY(BOX_X + 2, itemY);
-        SetColor(selected ? Color::LIGHT_GREEN : Color::LIGHT_GRAY, Color::BLACK);
-        cout << (selected ? "> " : "  ");
-        cout << m_items[i].GetName();
+
+        SetColor(
+            selected ? Color::LIGHT_GREEN : Color::LIGHT_GRAY,
+            Color::BLACK
+        );
+
+        std::cout << (selected ? "> " : "  ");
+        std::cout << m_items[i].GetName();
 
         GotoXY(BOX_X + 18, itemY);
-        if (selected)
+
+        if (m_items[i].GetName() == "EXIT")
         {
-            SetColor(Color::YELLOW, Color::BLACK);
-            cout << "< " << m_items[i].GetCurrentOption() << " >";
+            SetColor(
+                selected ? Color::LIGHT_RED : Color::WHITE,
+                Color::BLACK);
+
+            cout << "[ QUIT ]";
         }
         else
         {
-            SetColor(Color::WHITE, Color::BLACK);
-            cout << "  " << m_items[i].GetCurrentOption();
+            if (selected)
+            {
+                SetColor(Color::YELLOW, Color::BLACK);
+                cout << "< " << m_items[i].GetCurrentOption() << " >";
+            }
+            else
+            {
+                SetColor(Color::WHITE, Color::BLACK);
+                cout << "  " << m_items[i].GetCurrentOption();
+            }
         }
     }
 
     SetColor(Color::GRAY, Color::BLACK);
+
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 4);
-    cout << "Up/Dn : ÀÌµ¿  Lt/Rt : º¯°æ";
+    cout << "Up/Dn : Move  Lt/Rt : Change";
+
     GotoXY(BOX_X + 2, BOX_Y + BOX_H - 3);
-    cout << "ESC : µÚ·Î°¡±â";
+    cout << "Enter : Select   ESC : Back";
 }

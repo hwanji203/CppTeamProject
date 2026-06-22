@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 
 class Core
 {
@@ -14,4 +15,6 @@ private:
 
 private:
 	bool m_isRunning = true;
+	DWORD m_wheelPressStart = 0;
+	bool m_wheelPressed = false;
 };
