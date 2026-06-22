@@ -93,20 +93,7 @@ void Pawn::OnCollision(Collider* other)
 				m_pos.x = orr;
 		}
 	}
-	else if (tag == ColliderTag::ENEMY || tag == ColliderTag::PLAYER)
-	{
-		// 넉백이 진행 중이면 매 프레임 누적되지 않도록 재적용을 막는다(1회성).
-		if (m_rigidbody->IsKnockback())
-			return;
-
-		int otherCenterX = (other->GetLeft() + other->GetRight()) / 2;
-		int dir = (m_pos.x < otherCenterX) ? -1 : 1;
-		float speed = std::abs(m_rigidbody->GetVelocity());
-		float knockX = std::max(speed, KNOCKBACK_X);
-
-		// 수평 + 수직 동시 임펄스. (X는 maxSpeed가 아닌 KNOCKBACK_MAX까지 허용됨)
-		m_rigidbody->AddKnockback(dir * knockX, -KNOCKBACK_Y);
-	}
+	// ENEMY/PLAYER 간 충돌은 Player::OnCollision(넉백/크리티컬)에서 전담한다.
 }
 
 void Pawn::Tick()

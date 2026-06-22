@@ -46,3 +46,20 @@ void ColliderManager::Update()
 		}
 	}
 }
+
+bool ColliderManager::IsOverlappingTag(Collider* self, ColliderTag tag) const
+{
+	return FindOverlappingTag(self, tag) != nullptr;
+}
+
+Collider* ColliderManager::FindOverlappingTag(Collider* self, ColliderTag tag) const
+{
+	for (Collider* c : m_colliders)
+	{
+		if (c == self)
+			continue;
+		if (c->GetTag() == tag && self->Overlaps(*c))
+			return c;
+	}
+	return nullptr;
+}

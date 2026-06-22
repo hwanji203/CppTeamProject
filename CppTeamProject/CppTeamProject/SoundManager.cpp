@@ -1,7 +1,7 @@
 #include "SoundManager.h"
 #include "fmod.hpp"
 
-#pragma comment(lib, "fmod_vc.lib") 
+#pragma comment(lib, "fmod_vc.lib")
 SoundManager* SoundManager::m_pInst = nullptr;
 
 void SoundManager::Init()
@@ -18,6 +18,12 @@ void SoundManager::Update()
 
 void SoundManager::Release()
 {
+    // 추적 중인 재생 채널 정지
+    for (auto& pair : m_channels)
+        if (pair.second != nullptr)
+            pair.second->stop();
+    m_channels.clear();
+
     for (auto& pair : m_sounds)
         pair.second->release();
     m_sounds.clear();
@@ -53,6 +59,30 @@ void SoundManager::Play(const std::string& key)
         return;
 
     m_system->playSound(it->second, nullptr, false, nullptr);
+}
+
+void SoundManager::PlayRestart(const std::string& key)
+{
+    if (m_system == nullptr)
+        return;
+
+    auto it = m_sounds.find(key);
+    if (it == m_sounds.end())
+        return;
+
+    // 같은 키가 아직 재생 중이면 먼저 멈춰서 겹치지 않게 한다.
+    auto ch = m_channels.find(key);
+    if (ch != m_channels.end() && ch->second != nullptr)
+    {
+        bool playing = false;
+        ch->second->isPlaying(&playing);
+        if (playing)
+            ch->second->stop();
+    }
+
+    FMOD::Channel* channel = nullptr;
+    m_system->playSound(it->second, nullptr, false, &channel);
+    m_channels[key] = channel;
 }
 
 void SoundManager::PlayBGM(const std::string& filePath)

@@ -1,5 +1,6 @@
 #include "EnemyManager.h"
 #include "Defines.h"
+#include <cstdlib>
 
 EnemyManager* EnemyManager::m_inst = nullptr;
 
@@ -53,8 +54,16 @@ void EnemyManager::TrySpawnEnemyInRandomPos(const Vector2* playerPos, int ground
     if (m_nextSpawnTime < cur)
     {
         m_nextSpawnTime = cur + m_spawnDelay;
-        Vector2 startPos = { SCREEN_WIDTH / 2 + (std::rand() % groundLength), 0 };
-        auto enemy = std::make_unique<Enemy>(playerPos, 1, startPos);
+
+        // 지면은 화면 중앙을 기준으로 좌우로 groundLength(타일)만큼 = 화면 2*groundLength 폭.
+        // 기존엔 SCREEN_WIDTH/2 ~ +groundLength라 오른쪽에서만 스폰되던 버그 → 좌우 전체로 수정.
+        int span   = groundLength * 2;
+        int spawnX = SCREEN_WIDTH / 2 - groundLength + (std::rand() % span);
+
+        float speed = ENEMY_SPEED_MIN +
+                      (std::rand() % 101) / 100.0f * (SPEED_MAX - ENEMY_SPEED_MIN);
+
+        auto enemy = std::make_unique<Enemy>(playerPos, speed, Vector2{ spawnX, 0 });
         m_enemys.push_back(move(enemy));
     }
 }

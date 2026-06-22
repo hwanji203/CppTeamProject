@@ -2,15 +2,15 @@
 #include "Console.h"
 #include "SceneManager.h"
 #include "Defines.h"
+#include "SoundManager.h"
 void TitleScene::Init()
 {
 	m_resolution = { SCREEN_WIDTH, SCREEN_HEIGHT };
+	SOUND->PlayBGM("Sounds/title_bgm.mp3");   // 타이틀 BGM(루프)
 }
 
 void TitleScene::Update()
 {
-	UpdateInput(false);
-
 	if (GetKeyDown(VK_SPACE))
 	{
 		EnterAnimation();

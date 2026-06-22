@@ -60,6 +60,9 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>Hwan\04. Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ResultScene.cpp">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Hwan\04. Scene</Filter>
     </ClCompile>
@@ -132,6 +135,9 @@
       <Filter>Hwan\99. Headers</Filter>
     </ClInclude>
     <ClInclude Include="GameScene.h">
+      <Filter>Hwan\04. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultScene.h">
       <Filter>Hwan\04. Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">

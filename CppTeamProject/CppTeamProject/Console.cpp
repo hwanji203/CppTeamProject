@@ -1,4 +1,5 @@
 #include "Console.h"
+#include <cmath>
 
 void SetUnicodeMode()
 {
@@ -177,6 +178,81 @@ void ShakeConsoleWindow(int intensity, int duration, int interval)
 	SetWindowPos(hWnd, nullptr, originX, originY, 0, 0, SWP_NOSIZE);
 }
 
+// 비차단 카메라 쉐이킹용 원점(창이 정지해 있을 때의 위치)을 1회 캡처한다.
+static bool   g_shakeOriginCaptured = false;
+static int    g_shakeOriginX = 0;
+static int    g_shakeOriginY = 0;
+static double g_ferrisAngle  = 0.0;
+
+static void CaptureShakeOriginIfNeeded(HWND hWnd)
+{
+	if (g_shakeOriginCaptured)
+		return;
+
+	RECT rt = {};
+	GetWindowRect(hWnd, &rt);
+	g_shakeOriginX = rt.left;
+	g_shakeOriginY = rt.top;
+	g_shakeOriginCaptured = true;
+}
+
+void ConsoleShake(float intensity, bool ferris)
+{
+	HWND hWnd = GetConsoleWindow();
+	CaptureShakeOriginIfNeeded(hWnd);
+
+	int amp = static_cast<int>(std::lround(intensity));
+	if (amp < 1)
+	{
+		ConsoleShakeRestore();
+		return;
+	}
+
+	int dx, dy;
+	if (ferris)
+	{
+		// 관람차: 아주 작은 반지름(amp)으로 매 프레임 조금씩 회전
+		g_ferrisAngle += 0.9;
+		dx = static_cast<int>(std::lround(amp * std::cos(g_ferrisAngle)));
+		dy = static_cast<int>(std::lround(amp * std::sin(g_ferrisAngle)));
+	}
+	else
+	{
+		// 단순 흔들림: -amp ~ +amp 랜덤 오프셋
+		dx = rand() % (2 * amp + 1) - amp;
+		dy = rand() % (2 * amp + 1) - amp;
+	}
+
+	SetWindowPos(hWnd, nullptr,
+				 g_shakeOriginX + dx,
+				 g_shakeOriginY + dy,
+				 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
+void ConsoleShakeRestore()
+{
+	HWND hWnd = GetConsoleWindow();
+	CaptureShakeOriginIfNeeded(hWnd);
+	SetWindowPos(hWnd, nullptr,
+				 g_shakeOriginX, g_shakeOriginY,
+				 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
+void ConsoleRecoil(float offsetX, float offsetY)
+{
+	// 랜덤 흔들림이 아니라 원점에서 지정한 방향/크기로 창을 밀어 놓는다.
+	// 호출 측이 매 프레임 offset을 0으로 감쇠시키면 '밀렸다 복귀'가 된다.
+	HWND hWnd = GetConsoleWindow();
+	CaptureShakeOriginIfNeeded(hWnd);
+
+	int dx = static_cast<int>(std::lround(offsetX));
+	int dy = static_cast<int>(std::lround(offsetY));
+	SetWindowPos(hWnd, nullptr,
+				 g_shakeOriginX + dx,
+				 g_shakeOriginY + dy,
+				 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+}
+
 void SetConsoleMouseInputDisabled()
 {
 	HANDLE handle = GetStdHandle(STD_INPUT_HANDLE);
@@ -295,8 +371,6 @@ void FrameSync(int fps)
 		cnt++;
 		Sleep(targetTick - elapsed);
 	}
-	GotoXY(3, 3);
-	cout << cnt;
 	prevTick = GetTickCount64();
 }
 

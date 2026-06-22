@@ -18,7 +18,9 @@ public:
     void Release() override;
 private:
     Vector2 GetSpawnPos() const;
+    void DrawHud() const;   // 우측 HUD: 버틴 초 + 적 power 색 범례
 private:
+    unsigned long long m_startTick = 0;   // 게임 시작(플레이어 스폰) 시각(ms)
     Vector2 m_resolution;
     std::unique_ptr<Actor> m_player;
     std::unique_ptr<MapGenerator> m_generator;

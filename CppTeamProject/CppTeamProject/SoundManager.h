@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <map>
 #include "Utils.h"
@@ -26,6 +26,7 @@ public:
 
     void Load(const std::string& key, const std::string& filePath);
     void Play(const std::string& key);
+    void PlayRestart(const std::string& key);   // 같은 키가 재생 중이면 멈추고 처음부터 다시 재생
     void PlayBGM(const std::string& filePath);
     void StopBGM();
 private:
@@ -35,4 +36,5 @@ private:
     FMOD::Channel* m_bgmCh = nullptr;
     FMOD::Sound* m_bgm = nullptr;
     std::map<std::string, FMOD::Sound*> m_sounds;
+    std::map<std::string, FMOD::Channel*> m_channels;   // 키별 재생 채널 추적(재시작용)
 };

@@ -23,8 +23,9 @@ public:
 	bool IsDead() const { return m_isDead; }
 
 	virtual void RemovePrevPos() const;
-private:
+protected:
 	virtual void OnCollision(Collider* other);
+	void SetDead() { m_isDead = true; }   // 파생 클래스(Enemy/Player)에서 사망 처리
 
 protected:
 	std::unique_ptr<Rigidbody> m_rigidbody;
