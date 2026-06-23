@@ -2,6 +2,7 @@
 #include "ColliderManager.h"
 #include "Enemy.h"
 #include "Defines.h"
+#include <algorithm>
 
 Bullet::Bullet(Vector2 pos, int dir)
 	: m_pos(pos)
@@ -27,7 +28,13 @@ void Bullet::OnCollision(Collider* other)
 
 	if (tag == ColliderTag::TILE)
 	{
-		m_isDead = true;   // 벽에 맞으면 소멸(관통 X).
+		// 경계만 닿는 바닥(겹침 0)은 스쳐 지나가고, 실제로 파고든 벽에만 소멸한다.
+		int overlapX = std::min(m_collider->GetRight(), other->GetRight())
+					 - std::max(m_collider->GetLeft(), other->GetLeft());
+		int overlapY = std::min(m_collider->GetBottom(), other->GetBottom())
+					 - std::max(m_collider->GetTop(), other->GetTop());
+		if (overlapX > 0 && overlapY > 0)
+			m_isDead = true;   // 벽 관통 X.
 		return;
 	}
 	// PLAYER/ITEM/BULLET 등은 무시.
