@@ -42,18 +42,38 @@ void Bullet::OnCollision(Collider* other)
 
 void Bullet::Tick()
 {
+	if (m_isDead)
+		return;   // 이미 죽은 총알은 더 처리하지 않는다.
+
 	// 소수 속도를 누적해 정수 셀 단위로 이동.
 	m_accumX += BULLET_SPEED;
 	int steps = (int)m_accumX;
-	if (steps != 0)
-	{
-		m_pos.x += m_dir * steps;
-		m_accumX -= (float)steps;
-	}
+	m_accumX -= (float)steps;
 
-	// 화면 밖이면 소멸.
-	if (m_pos.x < 0 || m_pos.x > SCREEN_WIDTH - 1)
-		m_isDead = true;
+	// 한 칸씩 전진하며 매 칸 적/화면밖을 확인한다.
+	// (총알이 빨라도 다가오는 적을 건너뛰지 않게: tunneling 방지.)
+	for (int i = 0; i < steps; ++i)
+	{
+		m_pos.x += m_dir;
+
+		// 화면 밖이면 소멸.
+		if (m_pos.x < 0 || m_pos.x > SCREEN_WIDTH - 1)
+		{
+			m_isDead = true;
+			return;
+		}
+
+		// 이 칸에서 적과 겹치면 즉시 처치하고 소멸(벽 처리는 중앙 OnCollision이 담당).
+		Collider* hit = ColliderManager::GetInst()->FindOverlappingTag(m_collider.get(), ColliderTag::ENEMY);
+		if (hit != nullptr)
+		{
+			Enemy* enemy = static_cast<Enemy*>(hit->GetOwner());
+			if (enemy && !enemy->IsDying())
+				enemy->Kill();
+			m_isDead = true;
+			return;
+		}
+	}
 }
 
 void Bullet::RemovePrevPos() const
