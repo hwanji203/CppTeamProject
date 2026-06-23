@@ -26,6 +26,7 @@ public:
 	void Clear();
 public:
 	void TrySpawnEnemyInRandomPos(const Vector2* playerPos, int groundLength);
+	void KillAll();   // 필드의 모든 적을 즉사시킨다(모두죽이기 아이템).
 
 	// 설정창(일시정지) 동안 난이도 경과·스폰 타이밍을 멈췄다 재개한다.
 	void Pause();

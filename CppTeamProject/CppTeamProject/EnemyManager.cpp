@@ -102,3 +102,12 @@ void EnemyManager::TrySpawnEnemyInRandomPos(const Vector2* playerPos, int ground
         m_enemys.push_back(move(enemy));
     }
 }
+
+void EnemyManager::KillAll()
+{
+	for (auto& enemy : m_enemys)
+	{
+		if (enemy != nullptr)
+			enemy->Kill();   // Kill()이 enemy_death 사운드 재생 + 사망 처리.
+	}
+}
