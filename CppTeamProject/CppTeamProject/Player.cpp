@@ -205,7 +205,6 @@ void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 	// 플레이어와 적의 색(=속도 단계)이 같으면 크리티컬: 반작용 0, 피해 없음.
 	if (Enemy::ColorForSpeed(hitSpeed) == enemyColor)
 	{
-		m_rigidbody->SetVelocity(0.f);
 		SOUND->Play("critical");
 		// 사망/가시와 같은 방식의 차단형 진동으로 처치 순간을 확실히 흔든다(짧은 펀치감).
 		ConsoleShakeRestore();
