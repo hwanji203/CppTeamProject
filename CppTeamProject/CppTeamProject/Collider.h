@@ -2,7 +2,7 @@
 #include "Vector2.h"
 #include <functional>
 
-enum class ColliderTag { TILE, PLAYER, ENEMY, SPIKE };
+enum class ColliderTag { TILE, PLAYER, ENEMY, SPIKE, ITEM, BULLET };
 
 class Collider
 {

@@ -51,3 +51,20 @@ constexpr int CRIT_SHAKE_INTERVAL  = 10;
 constexpr int DEATH_SHAKE_INTENSITY = 7;
 constexpr int DEATH_SHAKE_DURATION  = 150;
 constexpr int DEATH_SHAKE_INTERVAL  = 12;
+
+// ── 아이템 시스템 ─────────────────────────────────────────────
+// 스폰 간격은 매번 [MIN, MAX] 초 사이 랜덤. 프레임 기반이라 오버레이 중 자동 정지.
+constexpr float ITEM_SPAWN_DELAY_MIN = 6.0f;   // 아이템 최소 스폰 간격(초).
+constexpr float ITEM_SPAWN_DELAY_MAX = 12.0f;  // 아이템 최대 스폰 간격(초).
+
+constexpr int ITEM_LIFETIME_FRAMES   = 480;    // 아이템 총 수명(프레임, 60fps=8초).
+constexpr int ITEM_BLINK_SLOW_FRAMES = 30;     // 수명 많을 때 깜빡임 주기(느림).
+constexpr int ITEM_BLINK_FAST_FRAMES = 6;      // 수명 적을 때 깜빡임 주기(빠름).
+
+constexpr int STAR_DURATION_FRAMES   = 300;    // 별 효과 지속(프레임, 5초).
+constexpr int STAR_BLINK_WARN_FRAMES = 60;     // 별 종료 전 깜빡임 시작(프레임, 1초).
+
+constexpr int GUN_DURATION_FRAMES    = 360;    // 총 효과 지속(프레임, 6초).
+constexpr int GUN_FIRE_INTERVAL      = 36;     // 총알 발사 간격(프레임, 0.6초).
+
+constexpr float BULLET_SPEED = 3.0f;           // 총알 수평 속도(셀/프레임, 플레이어보다 빠름).
