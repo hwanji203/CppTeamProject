@@ -8,6 +8,8 @@
 #include "SceneManager.h"
 #include "ColliderManager.h"
 #include "EnemyManager.h"
+#include "ItemManager.h"
+#include "BulletManager.h"
 #include <string>
 #include "SoundManager.h"
 
@@ -23,6 +25,8 @@ Core::Core()
 	SOUND->Load("wheel",        "Sounds/wheel.mp3");         // 마우스 휠
 	SOUND->Load("hit",          "Sounds/hit.mp3");           // 적-플레이어 일반 충돌
 	SOUND->Load("critical",     "Sounds/critical.mp3");      // 크리티컬 충돌
+	SOUND->Load("item_pickup", "Sounds/item_pickup.mp3");   // 아이템 획득.
+	SOUND->Load("gun_fire",    "Sounds/gun_fire.mp3");      // 총 발사.
 
 	SceneManager::GetInst()->RegisterScene("TitleScene", std::make_unique<TitleScene>());
 	SceneManager::GetInst()->RegisterScene("GameScene", std::make_unique<GameScene>());
@@ -157,6 +161,8 @@ Core::~Core()
 	// SceneManager를 먼저 파괴한 뒤 ColliderManager를 파괴한다.
 	SceneManager::GetInst()->DestroyInst();
 	EnemyManager::GetInst()->DestroyInst();
+	ItemManager::GetInst()->DestroyInst();
+	BulletManager::GetInst()->DestroyInst();
 	ColliderManager::GetInst()->DestroyInst();
 
 	// 사운드 자원 해제
