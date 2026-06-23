@@ -17,6 +17,8 @@ void SettingUI::Init()
 {
     m_selectedIdx = 0;
     m_justOpened = true;
+    m_closed = false;
+    m_dirty = true;   // 열린 직후 한 번 그린다.
 
     m_items.clear();
 
@@ -39,13 +41,19 @@ void SettingUI::Update()
     if (GetKeyDown(VK_UP) || GetBackDown())
     {
         if (m_selectedIdx > 0)
+        {
             m_selectedIdx--;
+            m_dirty = true;
+        }
     }
 
     if (GetKeyDown(VK_DOWN) || GetForwardDown())
     {
         if (m_selectedIdx < (int)m_items.size() - 1)
+        {
             m_selectedIdx++;
+            m_dirty = true;
+        }
     }
 
     const std::string& name = m_items[m_selectedIdx].GetName();
@@ -61,13 +69,16 @@ void SettingUI::Update()
         if (GetKeyDown(VK_RIGHT) || wheel > 0) step += VOL_STEP;
         if (GetKeyDown(VK_LEFT)  || wheel < 0) step -= VOL_STEP;
         if (step != 0)
+        {
             ApplySetting(m_selectedIdx, step);
+            m_dirty = true;
+        }
     }
 
     // 닫기/종료. ESC는 항상 닫기, 휠 짧게 클릭은 EXIT면 종료/그 외엔 닫기, Enter는 EXIT면 종료.
     if (GetKeyDown(VK_ESCAPE))
     {
-        SceneManager::GetInst()->ChangeScene(m_prevSceneName);
+        m_closed = true;   // 씬 전환 대신 닫기 요청만. Core가 오버레이를 걷어내고 게임을 재개한다.
         return;
     }
 
@@ -76,7 +87,7 @@ void SettingUI::Update()
         if (onExit)
             exit(0);
 
-        SceneManager::GetInst()->ChangeScene(m_prevSceneName);
+        m_closed = true;
         return;
     }
 
@@ -126,7 +137,10 @@ void SettingUI::DrawBox()
         GotoXY(BOX_X, BOX_Y + row);
         std::cout << '|';
 
-        GotoXY(BOX_X + BOX_W - 1, BOX_Y + row);
+        // 내부를 공백으로 채워 뒤 게임 화면이 비치지 않게 한다(검은 배경으로 덮어쓰기).
+        for (int i = 0; i < BOX_W - 2; i++)
+            std::cout << ' ';
+
         std::cout << '|';
     }
 

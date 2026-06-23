@@ -51,29 +51,71 @@ void Core::Update()
 
 	std::string curScene = SceneManager::GetInst()->GetCurSceneName();
 
-	bool wheelDown = (GetKey(VK_MBUTTON));
+	// 휠을 길게 누르면(300ms 이상) 떼기를 기다리지 않고 그 즉시 설정창을 띄운다.
+	// 설정창은 씬 전환이 아니라 일시정지 오버레이로 연다.
+	// (ChangeScene을 쓰면 게임 씬이 Release/Init돼 진행 상황이 초기화되므로 사용 금지.)
+	bool wheelDown = GetKey(VK_MBUTTON);
 
 	if (wheelDown && !m_wheelPressed)
 	{
 		m_wheelPressed = true;
-		m_wheelPressStart = GetTickCount();
+		m_wheelPressStart = GetTickCount64();
+	}
+	else if (!wheelDown)
+	{
+		m_wheelPressed = false;
 	}
 
-	if (!wheelDown && m_wheelPressed)
+	if (wheelDown && m_wheelPressed
+		&& GetTickCount64() - m_wheelPressStart >= 300
+		&& !m_overlay && curScene != "SettingUI")
 	{
-		DWORD pressTime = GetTickCount() - m_wheelPressStart;
+		SettingUI* setting =
+			static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
 
-		m_wheelPressed = false;
-
-		if (pressTime >= 300 && curScene != "SettingUI")
+		if (setting)
 		{
-			SettingUI* setting =
-				static_cast<SettingUI*>(SceneManager::GetInst()->GetScene("SettingUI"));
+			setting->SetPrevScene(curScene);
+			setting->Init();        // 설정창만 초기화. 게임 씬은 살려 둔다.
+			m_overlay = setting;
 
-			if (setting)
-				setting->SetPrevScene(curScene);
+			// 게임 중이면 생존 시간 타이머를 멈춘다.
+			if (curScene == "GameScene")
+			{
+				if (GameScene* game = static_cast<GameScene*>(
+						SceneManager::GetInst()->GetScene("GameScene")))
+					game->Pause();
+			}
+		}
+	}
 
-			SceneManager::GetInst()->ChangeScene("SettingUI");
+	// 오버레이가 떠 있으면 게임 Update는 멈추고(적/플레이어 정지) 설정창만 갱신한다.
+	if (m_overlay)
+	{
+		m_overlay->Update();
+
+		if (static_cast<SettingUI*>(m_overlay)->IsClosed())
+		{
+			m_overlay->Release();
+			m_overlay = nullptr;        // 게임 씬은 살아있는 그대로 재개.
+
+			// 게임 중이면 멈춰 있던 시간만큼 타이머를 보정해 재개한다.
+			if (curScene == "GameScene")
+			{
+				if (GameScene* game = static_cast<GameScene*>(
+						SceneManager::GetInst()->GetScene("GameScene")))
+					game->Resume();
+			}
+
+			// 설정창 잔상을 지운다. (맵은 빈 타일을 그리지 않아 가운데 박스가 안 지워지므로
+			// 화면을 한 번 비운 뒤 다음 프레임에 게임이 새로 그려지게 한다.)
+			SetColor(Color::WHITE, Color::BLACK);
+			for (int y = 0; y < SCREEN_HEIGHT; ++y)
+			{
+				GotoXY(0, y);
+				for (int x = 0; x < SCREEN_WIDTH; ++x)
+					cout << ' ';
+			}
 		}
 	}
 	else
@@ -86,6 +128,20 @@ void Core::Update()
 
 void Core::Render()
 {
+	// 오버레이 중에는 멈춘 게임 화면을 다시 그리지 않는다(화면에 그대로 남아 있음).
+	// 게임을 매 프레임 다시 그린 뒤 박스를 덮어쓰면 박스 영역이 깜빡이므로 박스만 갱신한다.
+	if (m_overlay)
+	{
+		// 바뀐 게 있을 때만 다시 그린다. 매 프레임 박스를 덮어쓰면 깜빡이므로.
+		SettingUI* setting = static_cast<SettingUI*>(m_overlay);
+		if (setting->IsDirty())
+		{
+			setting->Render();
+			setting->ClearDirty();
+		}
+		return;
+	}
+
 	SceneManager::GetInst()->Render();
 }
 

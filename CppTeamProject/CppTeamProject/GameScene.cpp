@@ -77,7 +77,7 @@ void GameScene::DrawHud() const
 
 	// 오른쪽 가운데: 버틴(지난) 초 + 그 오른쪽에 속도 색 범례.
 	// (맵은 EMPTY 타일을 그리지 않으므로 우측 빈 공간에 매 프레임 덮어쓴다.)
-	const int hudY = SCREEN_HEIGHT / 2;
+	const int hudY = SCREEN_HEIGHT / 3;
 
 	unsigned long long sec = (GetTickCount64() - m_startTick) / 1000;
 	char timeBuf[32];
@@ -105,6 +105,17 @@ void GameScene::DrawHud() const
 		SetColor(Color::WHITE);
 		cout << ": " << rangeBuf << ")   ";
 	}
+}
+
+void GameScene::Pause()
+{
+	m_pauseStart = GetTickCount64();
+}
+
+void GameScene::Resume()
+{
+	// 멈춰 있던 시간만큼 시작 시각을 뒤로 밀어, 생존 시간에서 설정창 시간을 제외한다.
+	m_startTick += GetTickCount64() - m_pauseStart;
 }
 
 void GameScene::Release()

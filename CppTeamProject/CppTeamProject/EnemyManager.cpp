@@ -6,9 +6,22 @@ EnemyManager* EnemyManager::m_inst = nullptr;
 
 void EnemyManager::Init()
 {
-	// 스폰 간격은 매개변수가 아니라 Defines의 ENEMY_SPAWN_DELAY(초)에서 가져온다.
-	m_spawnDelay = (ULONGLONG)(ENEMY_SPAWN_DELAY * 1000.f); // 초 단위 → ms
-	m_nextSpawnTime = GetTickCount64() + m_spawnDelay;
+	// 스폰 간격은 시간이 지날수록 ENEMY_SPAWN_DELAY -> ENEMY_SPAWN_DELAY_MIN으로 줄어든다.
+	m_startTime = GetTickCount64();
+	m_spawnDelay = (ULONGLONG)(ENEMY_SPAWN_DELAY * 1000.f); // 초 단위 -> ms
+	m_nextSpawnTime = m_startTime + m_spawnDelay;
+}
+
+ULONGLONG EnemyManager::CurrentSpawnDelay(ULONGLONG cur) const
+{
+	// 경과 시간을 0~1로 정규화(ENEMY_SPAWN_DELAY_RAMP초에 도달하면 1로 고정)한 뒤
+	// 초기값에서 하한까지 선형 보간한다.
+	float elapsedSec = (cur - m_startTime) / 1000.f;
+	float t = elapsedSec / ENEMY_SPAWN_DELAY_RAMP;
+	if (t > 1.f) t = 1.f;
+
+	float delaySec = ENEMY_SPAWN_DELAY + (ENEMY_SPAWN_DELAY_MIN - ENEMY_SPAWN_DELAY) * t;
+	return (ULONGLONG)(delaySec * 1000.f);
 }
 
 void EnemyManager::Update()
@@ -45,6 +58,7 @@ void EnemyManager::Clear()
 {
 	// unique_ptr 소멸 → Enemy/Pawn 소멸자가 ColliderManager에서 콜라이더 해제
 	m_enemys.clear();
+	m_startTime = 0;
 	m_spawnDelay = 0;
 	m_nextSpawnTime = 0;
 }
@@ -54,7 +68,8 @@ void EnemyManager::TrySpawnEnemyInRandomPos(const Vector2* playerPos, int ground
     ULONGLONG cur = GetTickCount64();
     if (m_nextSpawnTime < cur)
     {
-        m_nextSpawnTime = cur + m_spawnDelay;
+        // 다음 스폰 간격은 현재 경과 시간 기준으로 다시 계산해 점점 짧아지게 한다.
+        m_nextSpawnTime = cur + CurrentSpawnDelay(cur);
 
         // 살아있는 적이 ENEMY_MAX_ALIVE(3)마리 이하일 때만 새로 스폰한다.
         if ((int)m_enemys.size() > ENEMY_MAX_ALIVE)

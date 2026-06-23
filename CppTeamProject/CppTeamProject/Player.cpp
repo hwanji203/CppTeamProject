@@ -149,16 +149,21 @@ void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 {
 	const float playerVel = m_rigidbody->GetVelocity();
 
+	// Kill()이 적 색을 빨강으로 바꾸므로, 크리티컬 판정에 쓸 원래 색을 먼저 저장한다.
+	const Color enemyColor = enemy->GetColor();
+
+	// 색과 무관하게 적은 접촉 즉시 사망시킨다.
+	enemy->Kill();
+
 	// Freeze(위치 고정) 중에는 실제로 멈춰 있으므로 충돌 시 속도 0(초록)으로 계산한다.
 	// → 적과 색이 같을 수 없어 크리티컬이 나지 않고 피해를 입는다.
 	const bool  frozen   = m_rigidbody->IsFrozen();
 	const float hitSpeed = frozen ? 0.f : ColorSpeed();
 
-	// 플레이어와 적의 색(=속도 단계)이 같으면 크리티컬: 적 즉사, 반작용 0.
-	if (Enemy::ColorForSpeed(hitSpeed) == enemy->GetColor())
+	// 플레이어와 적의 색(=속도 단계)이 같으면 크리티컬: 반작용 0, 피해 없음.
+	if (Enemy::ColorForSpeed(hitSpeed) == enemyColor)
 	{
 		m_rigidbody->SetVelocity(0.f);
-		enemy->Kill();
 		SOUND->Play("critical");
 		// 사망/가시와 같은 방식의 차단형 진동으로 처치 순간을 확실히 흔든다(짧은 펀치감).
 		ConsoleShakeRestore();
