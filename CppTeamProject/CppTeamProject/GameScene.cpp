@@ -12,6 +12,8 @@
 #include "SoundManager.h"
 #include "Enemy.h"
 #include "Console.h"
+#include "ItemManager.h"
+#include "BulletManager.h"
 #include <cstdio>
 
 Vector2 GameScene::GetSpawnPos() const
@@ -32,6 +34,7 @@ void GameScene::Init()
 	Vector2 startPos = GetSpawnPos();
 	m_player = std::make_unique<Player>(startPos);
 	EnemyManager::GetInst()->Init();
+	ItemManager::GetInst()->Init();
 	SOUND->PlayBGM("Sounds/game_bgm.mp3");   // 게임 BGM(루프)
 
 	m_startTick = GetTickCount64();          // 버틴 시간 측정 시작
@@ -40,9 +43,12 @@ void GameScene::Init()
 void GameScene::Update()
 {
 	EnemyManager::GetInst()->TrySpawnEnemyInRandomPos(m_player->GetPos(), m_gameMap->GetGroundLength());
+	ItemManager::GetInst()->TrySpawnItem(m_gameMap->GetGroundLength());
 
 	m_player->Tick();
 	EnemyManager::GetInst()->Update();
+	ItemManager::GetInst()->Update();
+	BulletManager::GetInst()->Update();
 }
 
 void GameScene::Render()
@@ -64,6 +70,8 @@ void GameScene::Render()
 	}
 
 	EnemyManager::GetInst()->Render();
+	ItemManager::GetInst()->Render();
+	BulletManager::GetInst()->Render();
 	m_player->Render();
 
 	DrawHud();
@@ -121,6 +129,8 @@ void GameScene::Resume()
 void GameScene::Release()
 {
 	EnemyManager::GetInst()->Clear();
+	ItemManager::GetInst()->Clear();
+	BulletManager::GetInst()->Clear();
 	m_player.reset();                 
 	m_gameMap.reset();
 	m_generator.reset();
