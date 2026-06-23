@@ -2,6 +2,7 @@
 #include "ColliderManager.h"
 #include "Enemy.h"
 #include "Defines.h"
+#include "SoundManager.h"
 #include <algorithm>
 
 Bullet::Bullet(Vector2 pos, int dir)
@@ -21,7 +22,10 @@ void Bullet::OnCollision(Collider* other)
 	{
 		Enemy* enemy = static_cast<Enemy*>(other->GetOwner());
 		if (enemy && !enemy->IsDying())
+		{
 			enemy->Kill();
+			m_killedEnemy = true;
+		}
 		m_isDead = true;
 		return;
 	}
@@ -69,7 +73,10 @@ void Bullet::Tick()
 		{
 			Enemy* enemy = static_cast<Enemy*>(hit->GetOwner());
 			if (enemy && !enemy->IsDying())
+			{
 				enemy->Kill();
+				m_killedEnemy = true;
+			}
 			m_isDead = true;
 			return;
 		}

@@ -191,8 +191,6 @@ void Player::OnCollision(Collider* other)
 
 void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 {
-	const float playerVel = m_rigidbody->GetVelocity();
-
 	// Kill()이 적 색을 빨강으로 바꾸므로, 크리티컬 판정에 쓸 원래 색을 먼저 저장한다.
 	const Color enemyColor = enemy->GetColor();
 
@@ -235,19 +233,19 @@ void Player::ResolveEnemyHit(Enemy* enemy, Collider* enemyCol)
 		return;
 	}
 
-	int travelDir = (playerVel > 0.f) ? 1 : (playerVel < 0.f) ? -1 : 0;
-	if (travelDir == 0)
-	{
-		int enemyCenterX = (enemyCol->GetLeft() + enemyCol->GetRight()) / 2;
-		travelDir = (m_pos.x < enemyCenterX) ? 1 : -1;
-	}
+	// 넉백은 항상 "적의 반대쪽"으로. 속도 방향으로 정하면 적이 뒤에서 따라잡아
+	// 충돌할 때(같은 방향으로 도망치다 잡힘) 적 쪽으로 튕기는 버그가 생긴다.
+	int enemyCenterX  = (enemyCol->GetLeft() + enemyCol->GetRight()) / 2;
+	int playerCenterX = (m_collider->GetLeft() + m_collider->GetRight()) / 2;
+	int travelDir = (playerCenterX < enemyCenterX) ? 1 : -1;   // 적을 향한 방향
 
-	ApplyKnockback(-travelDir, KNOCKBACK_CONST);
+	ApplyKnockback(-travelDir, KNOCKBACK_CONST);               // 그 반대로 밀려남
 	SOUND->Play("hit");            // 색 불일치(넉백)
 }
 
 void Player::ApplyKnockback(int dir, float knockMag)
 {
+	m_rigidbody->SetVelocity(0);
 	m_rigidbody->AddKnockback(dir * knockMag, -KNOCKBACK_Y);
 
 	m_chargedWheel = 0;   // 넉백 시 차징 누적 리셋(freeze 흔들림/미리보기 정리)

@@ -17,6 +17,7 @@ public:
 	int GetHp() const { return m_hp; }          // 좌상단 HP 바 표시용
 	int GetMaxHp() const { return m_maxHp; }
 
+	void TriggerShake(float intensity, int frames);   // 이벤트 흔들림(방향 없는 진동) 시작
 private:
 	virtual void OnCollision(Collider* other) override;
 
@@ -28,7 +29,6 @@ private:
 	void ApplyKnockback(int dir, float knockMag);
 	void UpdateInvincibility();   // 무적 카운트다운 및 해제 처리
 	void UpdateCameraShake();     // 속도/이벤트/차징 기반 카메라 진동 구동
-	void TriggerShake(float intensity, int frames);   // 이벤트 흔들림(방향 없는 진동) 시작
 
 	void DrawSpeedText() const;   // 플레이어 위에 현재 표시 속도 수치
 	void ClearSpeedText() const;  // 이전 프레임의 속도 수치 지우기

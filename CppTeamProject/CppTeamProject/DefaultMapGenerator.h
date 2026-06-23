@@ -16,4 +16,3 @@ private:
     int m_groundY;
     int m_edgeGap;
 };
-

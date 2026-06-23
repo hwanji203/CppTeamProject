@@ -21,7 +21,7 @@ public:
 	}
 
 	void Spawn(Vector2 pos, int dir);
-	void Update();
+	int  Update();   // 반환값: 이번 프레임에 총알이 처치한 적의 수(타격감 진동용).
 	void Render();
 	void Clear();
 

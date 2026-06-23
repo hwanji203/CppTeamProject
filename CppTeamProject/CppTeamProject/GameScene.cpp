@@ -48,7 +48,13 @@ void GameScene::Update()
 	m_player->Tick();
 	EnemyManager::GetInst()->Update();
 	ItemManager::GetInst()->Update();
-	BulletManager::GetInst()->Update();
+
+	// 총알이 적을 처치했으면 비차단 카메라 진동으로 타격감을 준다.
+	if (BulletManager::GetInst()->Update() > 0)
+	{
+		if (Player* player = dynamic_cast<Player*>(m_player.get()))
+			player->TriggerShake(BULLET_KILL_SHAKE_INTENSITY, BULLET_KILL_SHAKE_FRAMES);
+	}
 }
 
 void GameScene::Render()

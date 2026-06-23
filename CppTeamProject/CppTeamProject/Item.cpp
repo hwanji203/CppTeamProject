@@ -31,7 +31,7 @@ Color Item::ColorForType(ItemType t)
 	switch (t)
 	{
 	case ItemType::HEAL:     return Color::LIGHT_RED;
-	case ItemType::STAR:     return Color::LIGHT_YELLOW;
+	case ItemType::STAR:     return Color::SKYBLUE;
 	case ItemType::GUN:      return Color::CYAN;
 	case ItemType::KILL_ALL: return Color::LIGHT_VIOLET;
 	default:                 return Color::WHITE;

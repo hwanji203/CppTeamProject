@@ -20,6 +20,9 @@ void SoundManager::Init()
     // 마스터 음소거/볼륨도 두 그룹에 함께 적용된다.
     m_system->createChannelGroup("bgm", &m_bgmGroup);
     m_system->createChannelGroup("sfx", &m_sfxGroup);
+
+    m_bgmGroup->setVolume(0.5f);
+    m_sfxGroup->setVolume(0.5f);
 }
 
 void SoundManager::Update()

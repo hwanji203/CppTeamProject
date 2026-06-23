@@ -7,8 +7,9 @@ void BulletManager::Spawn(Vector2 pos, int dir)
 	m_bullets.push_back(std::make_unique<Bullet>(pos, dir));
 }
 
-void BulletManager::Update()
+int BulletManager::Update()
 {
+	int kills = 0;
 	for (auto it = m_bullets.begin(); it != m_bullets.end();)
 	{
 		if (*it != nullptr)
@@ -17,6 +18,8 @@ void BulletManager::Update()
 
 			if ((*it)->IsDead())
 			{
+				if ((*it)->DidKillEnemy())
+					++kills;
 				(*it)->RemovePrevPos();
 				it = m_bullets.erase(it);
 				continue;
@@ -24,6 +27,7 @@ void BulletManager::Update()
 		}
 		++it;
 	}
+	return kills;
 }
 
 void BulletManager::Render()

@@ -63,8 +63,8 @@ private:
     bool m_isMuted = false;
     float m_volume = 1.0f;
 
-    int m_bgmVolume = 100;   // 0~100
-    int m_sfxVolume = 100;   // 0~100
+    int m_bgmVolume = 50;   // 0~100
+    int m_sfxVolume = 50;   // 0~100
 
     std::map<std::string, FMOD::Sound*> m_sounds;
     std::map<std::string, FMOD::Channel*> m_channels;
