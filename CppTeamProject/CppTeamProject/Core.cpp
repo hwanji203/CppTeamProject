@@ -56,6 +56,7 @@ void Core::Update()
 	// (ChangeScene을 쓰면 게임 씬이 Release/Init돼 진행 상황이 초기화되므로 사용 금지.)
 	bool wheelDown = GetKey(VK_MBUTTON);
 
+#pragma region Setting
 	if (wheelDown && !m_wheelPressed)
 	{
 		m_wheelPressed = true;
@@ -79,12 +80,14 @@ void Core::Update()
 			setting->Init();        // 설정창만 초기화. 게임 씬은 살려 둔다.
 			m_overlay = setting;
 
-			// 게임 중이면 생존 시간 타이머를 멈춘다.
+			// 게임 중이면 생존 시간 타이머와 적 난이도/스폰을 함께 멈춘다.
 			if (curScene == "GameScene")
 			{
 				if (GameScene* game = static_cast<GameScene*>(
 						SceneManager::GetInst()->GetScene("GameScene")))
 					game->Pause();
+
+				EnemyManager::GetInst()->Pause();
 			}
 		}
 	}
@@ -99,12 +102,14 @@ void Core::Update()
 			m_overlay->Release();
 			m_overlay = nullptr;        // 게임 씬은 살아있는 그대로 재개.
 
-			// 게임 중이면 멈춰 있던 시간만큼 타이머를 보정해 재개한다.
+			// 게임 중이면 멈춰 있던 시간만큼 타이머와 적 난이도/스폰을 보정해 재개한다.
 			if (curScene == "GameScene")
 			{
 				if (GameScene* game = static_cast<GameScene*>(
 						SceneManager::GetInst()->GetScene("GameScene")))
 					game->Resume();
+
+				EnemyManager::GetInst()->Resume();
 			}
 
 			// 설정창 잔상을 지운다. (맵은 빈 타일을 그리지 않아 가운데 박스가 안 지워지므로
@@ -118,6 +123,7 @@ void Core::Update()
 			}
 		}
 	}
+#pragma endregion
 	else
 	{
 		SceneManager::GetInst()->Update();

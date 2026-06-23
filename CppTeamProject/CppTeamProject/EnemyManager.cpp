@@ -12,6 +12,20 @@ void EnemyManager::Init()
 	m_nextSpawnTime = m_startTime + m_spawnDelay;
 }
 
+void EnemyManager::Pause()
+{
+	m_pauseStart = GetTickCount64();
+}
+
+void EnemyManager::Resume()
+{
+	// 멈춰 있던 시간만큼 난이도 기준과 다음 스폰 시각을 함께 뒤로 민다.
+	// (난이도에서 정지 시간을 제외하고, 재개 즉시 적이 몰려나오지 않게 한다.)
+	ULONGLONG paused = GetTickCount64() - m_pauseStart;
+	m_startTime     += paused;
+	m_nextSpawnTime += paused;
+}
+
 ULONGLONG EnemyManager::CurrentSpawnDelay(ULONGLONG cur) const
 {
 	// 경과 시간을 0~1로 정규화(ENEMY_SPAWN_DELAY_RAMP초에 도달하면 1로 고정)한 뒤

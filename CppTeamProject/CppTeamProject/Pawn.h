@@ -9,7 +9,8 @@
 class Pawn : public Actor, public IPhysicsable
 {
 public:
-	Pawn(Vector2 _pos = { 0,0 }, Color renderColor = Color::CYAN, std::string renderIcon = "§", Vector2 deadZone = {SCREEN_WIDTH, SCREEN_HEIGHT}, ColliderTag tag = ColliderTag::PLAYER);
+	Pawn(Vector2 _pos = { 0,0 }, Color renderColor = Color::CYAN, std::string renderIcon = "§"
+		 , Vector2 deadZone = {SCREEN_WIDTH, SCREEN_HEIGHT}, ColliderTag tag = ColliderTag::PLAYER);
 
 	virtual void Tick() override;
 	virtual void Render() const override;

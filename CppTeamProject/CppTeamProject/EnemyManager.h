@@ -26,6 +26,10 @@ public:
 	void Clear();
 public:
 	void TrySpawnEnemyInRandomPos(const Vector2* playerPos, int groundLength);
+
+	// 설정창(일시정지) 동안 난이도 경과·스폰 타이밍을 멈췄다 재개한다.
+	void Pause();
+	void Resume();
 private:
 	// 경과 시간(cur - m_startTime)에 따라 줄어드는 현재 스폰 간격(ms)을 계산한다.
 	ULONGLONG CurrentSpawnDelay(ULONGLONG cur) const;
@@ -33,6 +37,7 @@ private:
 	static EnemyManager* m_inst;
 	std::vector<std::unique_ptr<Enemy>> m_enemys;
 	ULONGLONG m_startTime = 0;
+	ULONGLONG m_pauseStart = 0;
 	ULONGLONG m_spawnDelay = 0;
 	ULONGLONG m_nextSpawnTime = 0;
 };

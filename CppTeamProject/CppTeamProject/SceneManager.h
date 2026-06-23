@@ -1,6 +1,4 @@
 #pragma once
-// ��𼭵��� ���� -> include
-// ��ü �ϳ��� ���� -> static
 #include "Utils.h"
 #include<map>
 #include<memory>
