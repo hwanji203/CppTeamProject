@@ -114,6 +114,18 @@
     <ClCompile Include="EnemyManager.cpp">
       <Filter>Hwan\02. Manager</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletManager.cpp">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClCompile>
     <ClCompile Include="SettingItem.cpp">
       <Filter>JJK\Settings</Filter>
     </ClCompile>
@@ -198,6 +210,18 @@
       <Filter>Hwan\03. Actor</Filter>
     </ClInclude>
     <ClInclude Include="EnemyManager.h">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Hwan\03. Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Hwan\02. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletManager.h">
       <Filter>Hwan\02. Manager</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
