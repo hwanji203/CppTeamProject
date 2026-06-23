@@ -22,7 +22,7 @@ private:
 
 	// 적과 충돌 시 색 비교 -> 같은 색이면 크리티컬, 아니면 넉백
 	void ResolveEnemyHit(Enemy* enemy, Collider* enemyCol);
-	void UpdateColor();           // 현재 속도에 따라 플레이어 색(=속도 단계) 갱신
+	void UpdateAppearance();      // 효과 상태에 따라 아이콘/색 갱신(종료 임박 시 평상/효과 교대 깜빡임)
 	float ColorSpeed() const;     // 색 판정용 표시(논리) 속도 = 실제 속도 / MOVE_SCALE
 	// dir 방향(±1) + 위로 넉백 적용 + 무적/카메라 흔들림 예약(공통 처리)
 	void ApplyKnockback(int dir, float knockMag);

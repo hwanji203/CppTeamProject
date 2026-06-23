@@ -50,7 +50,7 @@ void Player::Tick()
 			UpdateInvincibility();
 			UpdateCameraShake();
 			UpdateItemEffects();
-			UpdateColor();
+			UpdateAppearance();
 			return;
 		}
 
@@ -81,7 +81,7 @@ void Player::Tick()
 	UpdateInvincibility();
 	UpdateCameraShake();
 	UpdateItemEffects();
-	UpdateColor();
+	UpdateAppearance();
 }
 
 float Player::ColorSpeed() const
@@ -99,17 +99,29 @@ float Player::ColorSpeed() const
 	return logical;
 }
 
-void Player::UpdateColor()
+void Player::UpdateAppearance()
 {
-	// 지속 효과(별/총)가 켜져 있으면 그 아이템 색으로 틴트(가장 최근 것 우선).
-	if (m_starTimer > 0 || m_gunTimer > 0)
-	{
-		m_renderColor = Item::ColorForType(CurrentTintType());
-		return;
-	}
+	bool starOn = m_starTimer > 0;
+	bool gunOn  = m_gunTimer  > 0;
 
-	// 평상시: 적과 같은 색일 때 크리티컬이 나도록 색 판정용 속도로 색을 정한다.
-	m_renderColor = Enemy::ColorForSpeed(ColorSpeed());
+	// 종료 임박(마지막 1초) 동안 효과 모습과 평상 모습을 번갈아 보여준다.
+	int warnT = 0;
+	if (starOn && m_starTimer <= STAR_BLINK_WARN_FRAMES)   warnT = m_starTimer;
+	else if (gunOn && m_gunTimer <= GUN_BLINK_WARN_FRAMES) warnT = m_gunTimer;
+	bool showNormal = (warnT > 0) && (((warnT / PLAYER_BLINK_INTERVAL) % 2) == 1);
+
+	if ((!starOn && !gunOn) || showNormal)
+	{
+		// 평상 모습: 기본 아이콘 + 속도 색(크리티컬 판정용 색과 동일).
+		m_renderIcon  = "●";
+		m_renderColor = Enemy::ColorForSpeed(ColorSpeed());
+	}
+	else
+	{
+		// 효과 모습: 지속 효과 색(틴트, 가장 최근 것 우선) + 별이면 아이콘 ★.
+		m_renderColor = Item::ColorForType(CurrentTintType());
+		m_renderIcon  = starOn ? "★" : "●";
+	}
 }
 
 void Player::OnCollision(Collider* other)
@@ -344,18 +356,6 @@ void Player::Render() const
 		}
 	}
 
-	// 별 종료 1초 전부터 깜빡여 곧 끝남을 알린다.
-	if (m_starTimer > 0 && m_starTimer <= STAR_BLINK_WARN_FRAMES)
-	{
-		bool hide = ((m_starTimer / PLAYER_BLINK_INTERVAL) % 2) == 1;
-		if (hide)
-		{
-			RemovePrevPos();
-			m_hasLastRender = false;
-			return;
-		}
-	}
-
 	Pawn::Render();
 	DrawSpeedText();    // 플레이어 위에 현재 표시 속도 수치
 }
@@ -437,12 +437,9 @@ void Player::UpdateItemEffects()
 	if (vel > 0.1f)       m_facing = 1;
 	else if (vel < -0.1f) m_facing = -1;
 
-	// 별 타이머: 종료 시 원래 아이콘 복귀.
+	// 별 타이머 감소(모습 복귀/종료 깜빡임은 UpdateAppearance가 담당).
 	if (m_starTimer > 0)
-	{
-		if (--m_starTimer == 0)
-			m_renderIcon = "●";
-	}
+		--m_starTimer;
 
 	// 총 타이머 + 주기 발사.
 	if (m_gunTimer > 0)
