@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Pawn.h"
+#include "Item.h"
 
 class Enemy;
 
@@ -32,6 +33,10 @@ private:
 	void DrawSpeedText() const;   // 플레이어 위에 현재 표시 속도 수치
 	void ClearSpeedText() const;  // 이전 프레임의 속도 수치 지우기
 
+	void ApplyItem(ItemType type);    // 획득한 아이템 효과 적용.
+	void UpdateItemEffects();         // facing/별/총 타이머 갱신 + 총 발사.
+	ItemType CurrentTintType();       // 현재 표시할 지속 틴트 타입(가장 최근 활성).
+
 	// 무적 상태(넉백 후 깜빡임 + 입력/충돌 차단)
 	bool m_isInvincible    = false;
 	int  m_invincibleTimer = 0;
@@ -52,4 +57,13 @@ private:
 	// 체력: 색이 다른 적과 부딪히면 1 감소, 0이 되면 사망.
 	int m_maxHp = PLAYER_MAX_HP;
 	int m_hp    = PLAYER_MAX_HP;
+
+	// ── 아이템 효과 상태(전부 프레임 카운터 → 오버레이 중 자동 정지) ──
+	int m_starTimer = 0;   // 별 남은 프레임(>0이면 무적+접촉즉사+★).
+	int m_gunTimer  = 0;   // 총 남은 프레임(>0이면 주기적으로 총알 발사).
+	int m_gunFireCounter = 0;   // 다음 발사까지 남은 프레임.
+	int m_facing = 1;      // 마지막 이동 방향(+1 오른쪽, -1 왼쪽), 기본 오른쪽.
+
+	// 지속 틴트: 가장 최근에 먹은 지속 효과(별/총). HEAL은 '없음' 의미로 사용.
+	ItemType m_lastPersistentPick = ItemType::HEAL;
 };

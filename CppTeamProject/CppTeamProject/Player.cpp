@@ -1,5 +1,8 @@
 ﻿#include "Player.h"
 #include "Enemy.h"
+#include "Item.h"
+#include "BulletManager.h"
+#include "EnemyManager.h"
 #include "Collider.h"
 #include "ColliderManager.h"
 #include "Console.h"
@@ -46,6 +49,7 @@ void Player::Tick()
 			Pawn::Tick();
 			UpdateInvincibility();
 			UpdateCameraShake();
+			UpdateItemEffects();
 			UpdateColor();
 			return;
 		}
@@ -76,6 +80,7 @@ void Player::Tick()
 	Pawn::Tick();
 	UpdateInvincibility();
 	UpdateCameraShake();
+	UpdateItemEffects();
 	UpdateColor();
 }
 
@@ -96,7 +101,14 @@ float Player::ColorSpeed() const
 
 void Player::UpdateColor()
 {
-	// 적과 같은 색일 때 크리티컬이 나도록, 색 판정용 속도로 색을 정한다.
+	// 지속 효과(별/총)가 켜져 있으면 그 아이템 색으로 틴트(가장 최근 것 우선).
+	if (m_starTimer > 0 || m_gunTimer > 0)
+	{
+		m_renderColor = Item::ColorForType(CurrentTintType());
+		return;
+	}
+
+	// 평상시: 적과 같은 색일 때 크리티컬이 나도록 색 판정용 속도로 색을 정한다.
 	m_renderColor = Enemy::ColorForSpeed(ColorSpeed());
 }
 
@@ -110,12 +122,19 @@ void Player::OnCollision(Collider* other)
 
 	if (tag == ColliderTag::ENEMY)
 	{
-		// 무적 중에는 적과 충돌하지 않는다.
-		if (m_isInvincible)
+		Enemy* enemy = static_cast<Enemy*>(other->GetOwner());
+		if (!enemy || enemy->IsDying())   // 이미 죽는 중인 적은 재처리하지 않음.
 			return;
 
-		Enemy* enemy = static_cast<Enemy*>(other->GetOwner());
-		if (!enemy || enemy->IsDying())   // 이미 죽는 중인 적은 재처리하지 않음
+		// 별 효과 중: 색/낙하 여부와 무관하게 적을 즉사시키고 플레이어는 무적.
+		if (m_starTimer > 0)
+		{
+			enemy->Kill();
+			return;
+		}
+
+		// 무적 중에는 적과 충돌하지 않는다.
+		if (m_isInvincible)
 			return;
 
 		// 스폰 직후 아직 땅에 닿지 않은(낙하 중) 적에게 맞으면 플레이어 즉사.
@@ -129,6 +148,19 @@ void Player::OnCollision(Collider* other)
 		}
 
 		ResolveEnemyHit(enemy, other);
+		return;
+	}
+
+	if (tag == ColliderTag::ITEM)
+	{
+		// 무적 중에도 획득 가능. 적은 이 블록을 안 타므로 플레이어 전용.
+		Item* item = static_cast<Item*>(other->GetOwner());
+		if (!item || item->IsDead())
+			return;
+
+		ApplyItem(item->GetType());
+		item->Consume();
+		SOUND->Play("item_pickup");
 		return;
 	}
 
@@ -312,6 +344,18 @@ void Player::Render() const
 		}
 	}
 
+	// 별 종료 1초 전부터 깜빡여 곧 끝남을 알린다.
+	if (m_starTimer > 0 && m_starTimer <= STAR_BLINK_WARN_FRAMES)
+	{
+		bool hide = ((m_starTimer / PLAYER_BLINK_INTERVAL) % 2) == 1;
+		if (hide)
+		{
+			RemovePrevPos();
+			m_hasLastRender = false;
+			return;
+		}
+	}
+
 	Pawn::Render();
 	DrawSpeedText();    // 플레이어 위에 현재 표시 속도 수치
 }
@@ -351,4 +395,74 @@ void Player::ClearSpeedText() const
 		cout << ' ';
 
 	m_hasLastSpeed = false;
+}
+
+void Player::ApplyItem(ItemType type)
+{
+	switch (type)
+	{
+	case ItemType::HEAL:
+		if (m_hp < m_maxHp)
+			++m_hp;   // HP 1 회복(최대치 초과 금지).
+		break;
+
+	case ItemType::STAR:
+		m_starTimer = STAR_DURATION_FRAMES;
+		m_renderIcon = "★";              // 플레이어가 별이 된다.
+		m_lastPersistentPick = ItemType::STAR;
+		break;
+
+	case ItemType::GUN:
+		m_gunTimer = GUN_DURATION_FRAMES;
+		m_gunFireCounter = 1;            // 다음 프레임에 곧바로 첫 발.
+		m_lastPersistentPick = ItemType::GUN;
+		break;
+
+	case ItemType::KILL_ALL:
+		EnemyManager::GetInst()->KillAll();
+		// 모두죽이기: CRIT 차단형 흔들림을 2배 인텐시티로.
+		ConsoleShakeRestore();
+		ShakeConsoleWindow(CRIT_SHAKE_INTENSITY * 2, CRIT_SHAKE_DURATION, CRIT_SHAKE_INTERVAL);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Player::UpdateItemEffects()
+{
+	// facing 갱신: 충분히 움직일 때만 방향 갱신, 정지 시 직전 값 유지.
+	float vel = m_rigidbody->GetVelocity();
+	if (vel > 0.1f)       m_facing = 1;
+	else if (vel < -0.1f) m_facing = -1;
+
+	// 별 타이머: 종료 시 원래 아이콘 복귀.
+	if (m_starTimer > 0)
+	{
+		if (--m_starTimer == 0)
+			m_renderIcon = "●";
+	}
+
+	// 총 타이머 + 주기 발사.
+	if (m_gunTimer > 0)
+	{
+		--m_gunTimer;
+		if (--m_gunFireCounter <= 0)
+		{
+			BulletManager::GetInst()->Spawn(m_pos, m_facing);
+			SOUND->Play("gun_fire");
+			m_gunFireCounter = GUN_FIRE_INTERVAL;
+		}
+	}
+}
+
+ItemType Player::CurrentTintType()
+{
+	// 가장 최근에 먹은 지속 효과가 아직 살아있으면 그것, 아니면 남은 다른 효과.
+	if (m_lastPersistentPick == ItemType::STAR && m_starTimer > 0) return ItemType::STAR;
+	if (m_lastPersistentPick == ItemType::GUN  && m_gunTimer  > 0) return ItemType::GUN;
+	if (m_starTimer > 0) { m_lastPersistentPick = ItemType::STAR; return ItemType::STAR; }
+	m_lastPersistentPick = ItemType::GUN;
+	return ItemType::GUN;   // 여기 도달 시 총은 반드시 활성.
 }
